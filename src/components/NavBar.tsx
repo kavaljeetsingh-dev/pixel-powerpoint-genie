@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FilePresentationIcon, Github } from "lucide-react";
+import { PresentationIcon, Github } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 
 interface NavBarProps {
@@ -38,7 +38,7 @@ export function NavBar({ onThemeChange }: NavBarProps) {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <FilePresentationIcon size={28} className="text-primary" />
+          <PresentationIcon size={28} className="text-primary" />
           <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600">
             Pixel PowerPoint Genie
           </span>
