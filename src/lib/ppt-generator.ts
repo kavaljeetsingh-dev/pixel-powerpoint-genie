@@ -127,7 +127,7 @@ export const generatePPT = (presentation: Presentation): void => {
     
     // Add title
     pptSlide.addText(slide.title, {
-      x: layoutType === 1 ? 'center' : 0.5, 
+      x: layoutType === 1 ? 0.5 : 0.5, 
       y: layoutType === 2 ? 0.3 : 0.5, 
       w: '90%', 
       h: 1, 
@@ -256,7 +256,6 @@ export const generatePPT = (presentation: Presentation): void => {
             h: 0.2,
             fill: { color: colorScheme.accent },
             line: { type: 'none' },
-            radius: 0.1,
           });
         });
       }
@@ -290,7 +289,6 @@ export const generatePPT = (presentation: Presentation): void => {
           y: 1.7,
           w: 3, 
           h: 3.2,
-          sizing: { type: 'cover' },
           shadow: { type: 'outer', blur: 5, offset: 0, angle: 45, color: colorScheme.accent + '40' }
         });
         
@@ -341,7 +339,6 @@ export const generatePPT = (presentation: Presentation): void => {
     h: 2.5,
     fill: { color: colorScheme.accent + '22' },
     line: { color: colorScheme.accent, width: 3 },
-    radius: 0.2,
     shadow: { type: 'outer', blur: 15, offset: 5, angle: 45, color: colorScheme.accent + '33' }
   });
   
