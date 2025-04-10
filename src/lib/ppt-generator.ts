@@ -97,7 +97,7 @@ export const generatePPT = (presentation: Presentation): void => {
       y: 0.1,
       fontSize: 14,
       color: colorScheme.text,
-      transparent: 30,
+      transparency: 30,
       bold: true,
     });
     
