@@ -23,6 +23,14 @@ const getThemeColors = (theme: string) => {
       return { background: '#F0FFF4', text: '#065F46', accent: '#34D399' };
     case 'dark':
       return { background: '#1F2937', text: '#F9FAFB', accent: '#6366F1' };
+    case 'sunset':
+      return { background: '#FFFBF5', text: '#7D3C98', accent: '#FF7F50' };
+    case 'ocean':
+      return { background: '#EBF5FB', text: '#1A5276', accent: '#3498DB' };
+    case 'forest':
+      return { background: '#E8F8F5', text: '#145A32', accent: '#27AE60' };
+    case 'royal':
+      return { background: '#F5EEF8', text: '#4A235A', accent: '#8E44AD' };
     case 'light':
     default:
       return { background: '#FFFFFF', text: '#333333', accent: '#4F46E5' };
@@ -82,6 +90,9 @@ export function PresentationPreview({ presentation, loading }: PresentationPrevi
   const currentSlideContent = presentation.slides[currentSlide];
   const themeColors = getThemeColors(presentation.theme);
 
+  // Determine the layout type based on slide index
+  const layoutType = currentSlide % 3;
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex justify-between items-center p-4 border-b">
@@ -112,40 +123,146 @@ export function PresentationPreview({ presentation, loading }: PresentationPrevi
               WebMind AI
             </div>
             
-            {/* Slide title */}
-            <h3 className="text-2xl font-bold mb-4" style={{ color: themeColors.accent }}>
+            {/* Slide title with different alignments based on layout */}
+            <h3 
+              className={`text-2xl font-bold mb-4 ${layoutType === 1 ? 'text-center' : ''}`}
+              style={{ color: themeColors.accent }}
+            >
               {currentSlideContent.title}
             </h3>
             
             {/* Title underline - visual representation */}
-            <div className="h-0.5 w-full mb-4 opacity-80" style={{ backgroundColor: themeColors.accent }}></div>
+            <div 
+              className={`h-0.5 w-full mb-4 opacity-80`}
+              style={{ backgroundColor: themeColors.accent }}
+            ></div>
             
-            <div className="flex flex-col md:flex-row gap-4">
-              {/* Content area */}
-              <div className="flex-grow space-y-2">
-                {currentSlideContent.content.map((point, index) => (
-                  <div key={index} className="flex items-start gap-2">
-                    <div className="rounded-full w-2 h-2 mt-2" style={{ backgroundColor: themeColors.accent }}></div>
-                    <p style={{ color: themeColors.text }}>{point}</p>
-                  </div>
-                ))}
-              </div>
-              
-              {/* Image area */}
-              {currentSlideContent.imageUrl && (
-                <div className="w-full md:w-1/3 flex-shrink-0">
-                  <Card className="overflow-hidden" style={{ borderColor: themeColors.accent + '40' }}>
-                    <CardContent className="p-0">
-                      <img 
-                        src={currentSlideContent.imageUrl} 
-                        alt={currentSlideContent.title} 
-                        className="w-full h-auto object-cover"
-                      />
-                    </CardContent>
-                  </Card>
+            {/* Different layouts based on slide number */}
+            {layoutType === 0 && (
+              <div className="flex flex-col md:flex-row gap-4">
+                {/* Content area */}
+                <div className="flex-grow space-y-2">
+                  {currentSlideContent.content.map((point, index) => (
+                    <div key={index} className="flex items-start gap-2">
+                      <div className="rounded-full w-2 h-2 mt-2" style={{ backgroundColor: themeColors.accent }}></div>
+                      <p style={{ color: themeColors.text }}>{point}</p>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </div>
+                
+                {/* Image area */}
+                {currentSlideContent.imageUrl && (
+                  <div className="w-full md:w-1/3 flex-shrink-0">
+                    <Card className="overflow-hidden" style={{ borderColor: themeColors.accent + '40' }}>
+                      <CardContent className="p-0">
+                        <img 
+                          src={currentSlideContent.imageUrl} 
+                          alt={currentSlideContent.title} 
+                          className="w-full h-auto object-cover"
+                        />
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Two-column layout */}
+            {layoutType === 1 && (
+              <div className="flex flex-col space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Split content into two columns */}
+                  <div className="space-y-2">
+                    {currentSlideContent.content.slice(0, Math.ceil(currentSlideContent.content.length / 2)).map((point, index) => (
+                      <div key={index} className="flex items-start gap-2">
+                        <div className="rounded-full w-2 h-2 mt-2" style={{ backgroundColor: themeColors.accent }}></div>
+                        <p style={{ color: themeColors.text }}>{point}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="space-y-2">
+                    {currentSlideContent.content.slice(Math.ceil(currentSlideContent.content.length / 2)).map((point, index) => (
+                      <div key={index} className="flex items-start gap-2">
+                        <div className="rounded-full w-2 h-2 mt-2" style={{ backgroundColor: themeColors.accent }}></div>
+                        <p style={{ color: themeColors.text }}>{point}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Centered image below content */}
+                {currentSlideContent.imageUrl && (
+                  <div className="flex justify-center mt-4">
+                    <Card className="overflow-hidden w-3/4" style={{ borderColor: themeColors.accent + '40' }}>
+                      <CardContent className="p-0">
+                        <img 
+                          src={currentSlideContent.imageUrl} 
+                          alt={currentSlideContent.title} 
+                          className="w-full h-auto object-cover"
+                        />
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Centered content with visual accents */}
+            {layoutType === 2 && (
+              <div className="flex flex-col md:flex-row gap-6">
+                {/* Content with numbered points */}
+                <div className="flex-grow space-y-3 px-4 py-2 rounded-lg" style={{ backgroundColor: themeColors.background === '#FFFFFF' ? '#F8F8F8' : themeColors.background + '90' }}>
+                  {currentSlideContent.content.map((point, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <div 
+                        className="flex items-center justify-center rounded-full w-6 h-6 mt-0.5 flex-shrink-0 text-xs font-bold"
+                        style={{ backgroundColor: themeColors.accent, color: themeColors.background }}
+                      >{index + 1}</div>
+                      <p style={{ color: themeColors.text }}>{point}</p>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Image with fancy border */}
+                {currentSlideContent.imageUrl && (
+                  <div className="w-full md:w-1/3 flex-shrink-0 relative">
+                    <div 
+                      className="absolute inset-0 rounded-lg transform rotate-3"
+                      style={{ backgroundColor: themeColors.accent, opacity: 0.3 }}
+                    ></div>
+                    <Card className="overflow-hidden relative z-10" style={{ borderColor: themeColors.accent }}>
+                      <CardContent className="p-0">
+                        <img 
+                          src={currentSlideContent.imageUrl} 
+                          alt={currentSlideContent.title} 
+                          className="w-full h-auto object-cover"
+                        />
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Chart layout (simplified visual representation) */}
+            {currentSlide > 0 && currentSlide % 4 === 0 && (
+              <div className="mt-4 border border-dashed rounded-lg p-4" style={{ borderColor: themeColors.accent }}>
+                <div className="text-center mb-2 font-medium" style={{ color: themeColors.text }}>
+                  Chart Visualization (Preview)
+                </div>
+                <div className="h-32 flex items-end justify-around">
+                  {[75, 45, 90, 60, 82].map((value, i) => (
+                    <div key={i} className="flex flex-col items-center">
+                      <div 
+                        className="w-12 rounded-t transition-all duration-500" 
+                        style={{ height: `${value}%`, backgroundColor: themeColors.accent, opacity: (i % 2 === 0) ? 1 : 0.7 }}
+                      ></div>
+                      <div className="text-xs mt-1" style={{ color: themeColors.text }}>Item {i+1}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             
             {/* Slide number */}
             <div className="mt-4 text-right text-xs opacity-70" style={{ color: themeColors.text }}>

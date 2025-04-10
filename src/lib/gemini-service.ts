@@ -8,14 +8,10 @@ export class GeminiService {
   private model: any;
 
   constructor() {
-    // The API key should be loaded from environment variables
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    // Use the provided API key directly
+    const apiKey = "AIzaSyDmej8KqWnwG1Tf0BP6peJhHbBWHOpVhBw";
     
-    if (!apiKey) {
-      console.error('Missing Gemini API key. Please set VITE_GEMINI_API_KEY in your .env file');
-    }
-    
-    this.genAI = new GoogleGenerativeAI(apiKey || '');
+    this.genAI = new GoogleGenerativeAI(apiKey);
     
     // Initialize the Gemini 2.0 Flash model
     this.model = this.genAI.getGenerativeModel({
@@ -40,6 +36,8 @@ export class GeminiService {
       1. A clear, concise title
       2. 3-5 bullet points of relevant content
       3. For each slide, suggest a prompt for generating an image that would work well with the slide content
+      
+      Include data points that could be visualized in charts (every 4th slide should have numerical data that could be shown in a chart).
       
       Format your response as a JSON object with this structure:
       {

@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 export function AppBuilder() {
   const [presentation, setPresentation] = useState<Presentation | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark' | 'midnight' | 'skywave' | 'mint'>('light');
+  const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark' | 'midnight' | 'skywave' | 'mint' | 'sunset' | 'ocean' | 'forest' | 'royal'>('light');
   const { toast } = useToast();
 
   // Fallback presentation generator when API isn't available
@@ -95,7 +95,7 @@ export function AppBuilder() {
   };
 
   // Handle theme change for the presentation
-  const handleThemeChange = (theme: 'light' | 'dark' | 'midnight' | 'skywave' | 'mint') => {
+  const handleThemeChange = (theme: 'light' | 'dark' | 'midnight' | 'skywave' | 'mint' | 'sunset' | 'ocean' | 'forest' | 'royal') => {
     setSelectedTheme(theme);
     
     // Update existing presentation theme if one exists
