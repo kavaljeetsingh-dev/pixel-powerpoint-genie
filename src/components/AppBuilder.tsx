@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 export function AppBuilder() {
   const [presentation, setPresentation] = useState<Presentation | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark' | 'midnight' | 'skywave' | 'mint'>('light');
   const { toast } = useToast();
 
   // Fallback presentation generator when API isn't available
@@ -33,7 +34,7 @@ export function AppBuilder() {
     return {
       title: `Presentation on ${topic}`,
       slides,
-      theme: 'light'
+      theme: selectedTheme
     };
   };
 
@@ -63,10 +64,11 @@ export function AppBuilder() {
           })
         );
         
-        // Update the presentation with generated images
+        // Update the presentation with generated images and selected theme
         newPresentation = {
           ...newPresentation,
-          slides: updatedSlides
+          slides: updatedSlides,
+          theme: selectedTheme
         };
         
       } catch (apiError) {
@@ -92,6 +94,19 @@ export function AppBuilder() {
     }
   };
 
+  // Handle theme change for the presentation
+  const handleThemeChange = (theme: 'light' | 'dark' | 'midnight' | 'skywave' | 'mint') => {
+    setSelectedTheme(theme);
+    
+    // Update existing presentation theme if one exists
+    if (presentation) {
+      setPresentation({
+        ...presentation,
+        theme
+      });
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 h-[calc(100vh-64px)] overflow-hidden">
       <AnimatePresence mode="wait">
@@ -105,6 +120,8 @@ export function AppBuilder() {
           <ChatInterface 
             onSubmit={handleGeneratePresentation}
             loading={loading}
+            onThemeChange={handleThemeChange}
+            currentTheme={selectedTheme}
           />
         </motion.div>
       </AnimatePresence>

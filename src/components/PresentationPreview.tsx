@@ -12,6 +12,23 @@ interface PresentationPreviewProps {
   loading: boolean;
 }
 
+// Get theme colors based on theme name
+const getThemeColors = (theme: string) => {
+  switch (theme) {
+    case 'midnight':
+      return { background: '#1A1A2E', text: '#EEEEEE', accent: '#E94560' };
+    case 'skywave':
+      return { background: '#ECF3FF', text: '#334155', accent: '#3B82F6' };
+    case 'mint':
+      return { background: '#F0FFF4', text: '#065F46', accent: '#34D399' };
+    case 'dark':
+      return { background: '#1F2937', text: '#F9FAFB', accent: '#6366F1' };
+    case 'light':
+    default:
+      return { background: '#FFFFFF', text: '#333333', accent: '#4F46E5' };
+  }
+};
+
 export function PresentationPreview({ presentation, loading }: PresentationPreviewProps) {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -63,6 +80,7 @@ export function PresentationPreview({ presentation, loading }: PresentationPrevi
   }
 
   const currentSlideContent = presentation.slides[currentSlide];
+  const themeColors = getThemeColors(presentation.theme);
 
   return (
     <div className="flex flex-col h-full">
@@ -82,25 +100,41 @@ export function PresentationPreview({ presentation, loading }: PresentationPrevi
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
-            className={`slide bg-${presentation.theme === 'light' ? 'white' : 'gray-800'} p-6 rounded-lg shadow-lg`}
+            className="slide p-6 rounded-lg shadow-lg"
+            style={{ 
+              backgroundColor: themeColors.background,
+              color: themeColors.text,
+              backgroundImage: `radial-gradient(circle at 10% 20%, ${themeColors.background}99 0%, ${themeColors.background} 90%)` 
+            }}
           >
-            <h3 className={`text-2xl font-bold mb-4 text-${presentation.theme === 'light' ? 'indigo-600' : 'indigo-400'}`}>
+            {/* Slide branding */}
+            <div className="text-xs opacity-70 mb-1" style={{ color: themeColors.text }}>
+              WebMind AI
+            </div>
+            
+            {/* Slide title */}
+            <h3 className="text-2xl font-bold mb-4" style={{ color: themeColors.accent }}>
               {currentSlideContent.title}
             </h3>
             
+            {/* Title underline - visual representation */}
+            <div className="h-0.5 w-full mb-4 opacity-80" style={{ backgroundColor: themeColors.accent }}></div>
+            
             <div className="flex flex-col md:flex-row gap-4">
+              {/* Content area */}
               <div className="flex-grow space-y-2">
                 {currentSlideContent.content.map((point, index) => (
                   <div key={index} className="flex items-start gap-2">
-                    <div className={`rounded-full w-2 h-2 mt-2 bg-${presentation.theme === 'light' ? 'indigo-500' : 'indigo-400'}`} />
-                    <p className={`text-${presentation.theme === 'light' ? 'gray-700' : 'gray-200'}`}>{point}</p>
+                    <div className="rounded-full w-2 h-2 mt-2" style={{ backgroundColor: themeColors.accent }}></div>
+                    <p style={{ color: themeColors.text }}>{point}</p>
                   </div>
                 ))}
               </div>
               
+              {/* Image area */}
               {currentSlideContent.imageUrl && (
                 <div className="w-full md:w-1/3 flex-shrink-0">
-                  <Card className="overflow-hidden">
+                  <Card className="overflow-hidden" style={{ borderColor: themeColors.accent + '40' }}>
                     <CardContent className="p-0">
                       <img 
                         src={currentSlideContent.imageUrl} 
@@ -111,6 +145,11 @@ export function PresentationPreview({ presentation, loading }: PresentationPrevi
                   </Card>
                 </div>
               )}
+            </div>
+            
+            {/* Slide number */}
+            <div className="mt-4 text-right text-xs opacity-70" style={{ color: themeColors.text }}>
+              {currentSlide + 1} / {presentation.slides.length}
             </div>
           </motion.div>
         </div>

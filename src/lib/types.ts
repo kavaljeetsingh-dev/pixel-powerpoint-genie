@@ -9,7 +9,7 @@ export interface SlideContent {
 export interface Presentation {
   title: string;
   slides: SlideContent[];
-  theme: 'light' | 'dark';
+  theme: 'light' | 'dark' | 'midnight' | 'skywave' | 'mint';
 }
 
 export interface ChatMessage {
