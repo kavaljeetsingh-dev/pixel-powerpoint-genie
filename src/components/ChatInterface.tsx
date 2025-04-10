@@ -11,8 +11,8 @@ import { ChatMessage } from "@/lib/types";
 interface ChatInterfaceProps {
   onSubmit: (prompt: string, slideCount: number) => Promise<void>;
   loading: boolean;
-  onThemeChange?: (theme: 'light' | 'dark' | 'midnight' | 'skywave' | 'mint') => void;
-  currentTheme?: 'light' | 'dark' | 'midnight' | 'skywave' | 'mint';
+  onThemeChange?: (theme: 'light' | 'dark' | 'midnight' | 'skywave' | 'mint' | 'sunset' | 'ocean' | 'forest' | 'royal') => void;
+  currentTheme?: 'light' | 'dark' | 'midnight' | 'skywave' | 'mint' | 'sunset' | 'ocean' | 'forest' | 'royal';
 }
 
 export function ChatInterface({ onSubmit, loading, onThemeChange, currentTheme = 'light' }: ChatInterfaceProps) {
@@ -112,7 +112,7 @@ export function ChatInterface({ onSubmit, loading, onThemeChange, currentTheme =
             </label>
             <Select 
               value={currentTheme}
-              onValueChange={(value) => onThemeChange(value as 'light' | 'dark' | 'midnight' | 'skywave' | 'mint')}
+              onValueChange={(value) => onThemeChange(value as 'light' | 'dark' | 'midnight' | 'skywave' | 'mint' | 'sunset' | 'ocean' | 'forest' | 'royal')}
               disabled={loading}
             >
               <SelectTrigger id="theme-select" className="w-full">
@@ -124,6 +124,10 @@ export function ChatInterface({ onSubmit, loading, onThemeChange, currentTheme =
                 <SelectItem value="midnight">Midnight</SelectItem>
                 <SelectItem value="skywave">Skywave</SelectItem>
                 <SelectItem value="mint">Mint</SelectItem>
+                <SelectItem value="sunset">Sunset</SelectItem>
+                <SelectItem value="ocean">Ocean</SelectItem>
+                <SelectItem value="forest">Forest</SelectItem>
+                <SelectItem value="royal">Royal</SelectItem>
               </SelectContent>
             </Select>
           </div>

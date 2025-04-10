@@ -1,4 +1,3 @@
-
 import pptxgen from 'pptxgenjs';
 import { Presentation, SlideContent } from './types';
 
@@ -127,7 +126,7 @@ export const generatePPT = (presentation: Presentation): void => {
     
     // Add title
     pptSlide.addText(slide.title, {
-      x: layoutType === 1 ? 0.5 : 0.5, 
+      x: 0.5, 
       y: layoutType === 2 ? 0.3 : 0.5, 
       w: '90%', 
       h: 1, 
