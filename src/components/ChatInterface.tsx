@@ -11,9 +11,11 @@ import { ChatMessage } from "@/lib/types";
 interface ChatInterfaceProps {
   onSubmit: (prompt: string, slideCount: number) => Promise<void>;
   loading: boolean;
+  onThemeChange?: (theme: 'light' | 'dark' | 'midnight' | 'skywave' | 'mint') => void;
+  currentTheme?: 'light' | 'dark' | 'midnight' | 'skywave' | 'mint';
 }
 
-export function ChatInterface({ onSubmit, loading }: ChatInterfaceProps) {
+export function ChatInterface({ onSubmit, loading, onThemeChange, currentTheme = 'light' }: ChatInterfaceProps) {
   const [prompt, setPrompt] = useState<string>("");
   const [slideCount, setSlideCount] = useState<number>(4);
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -102,6 +104,30 @@ export function ChatInterface({ onSubmit, loading }: ChatInterfaceProps) {
             </SelectContent>
           </Select>
         </div>
+
+        {onThemeChange && (
+          <div className="flex-grow">
+            <label htmlFor="theme-select" className="block text-sm font-medium text-muted-foreground mb-1">
+              Theme
+            </label>
+            <Select 
+              value={currentTheme}
+              onValueChange={(value) => onThemeChange(value as 'light' | 'dark' | 'midnight' | 'skywave' | 'mint')}
+              disabled={loading}
+            >
+              <SelectTrigger id="theme-select" className="w-full">
+                <SelectValue placeholder="Select theme" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="midnight">Midnight</SelectItem>
+                <SelectItem value="skywave">Skywave</SelectItem>
+                <SelectItem value="mint">Mint</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
       
       <div className="flex-grow overflow-y-auto p-4 space-y-4">

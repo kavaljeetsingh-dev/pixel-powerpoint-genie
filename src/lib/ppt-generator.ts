@@ -64,7 +64,7 @@ export const generatePPT = (presentation: Presentation): void => {
         w: slide.imageUrl ? '55%' : '90%',
         h: 3.2,
         fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : '#FFFFFF', transparency: 85 },
-        line: 'none',
+        line: { type: 'none' },
       });
       
       // Add content as bullet points
@@ -97,7 +97,7 @@ export const generatePPT = (presentation: Presentation): void => {
       y: 0.1,
       fontSize: 14,
       color: colorScheme.text,
-      opacity: 0.7,
+      transparent: 30,
       bold: true,
     });
     
