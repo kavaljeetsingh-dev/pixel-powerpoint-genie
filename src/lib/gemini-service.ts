@@ -29,6 +29,18 @@ export class GeminiService {
     });
   }
 
+  // Helper function to extract JSON from potential markdown code blocks
+  private extractJsonFromResponse(text: string): string {
+    // Check if the response is wrapped in markdown code blocks
+    const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (jsonMatch && jsonMatch[1]) {
+      return jsonMatch[1].trim();
+    }
+    
+    // If no markdown code blocks are found, return the original text
+    return text;
+  }
+
   async generatePresentation(topic: string, slideCount: number): Promise<Presentation> {
     const systemPrompt = `
       You are an expert presentation generator AI.
@@ -66,19 +78,26 @@ export class GeminiService {
         ]
       }
       
-      Don't include any explanations or markdown formatting, just return the JSON.
+      Don't include any explanations or markdown formatting, just return the raw JSON object.
     `;
 
     try {
+      console.log(`Generating presentation on "${topic}" with ${slideCount} slides...`);
       const result = await this.model.generateContent([systemPrompt]);
       const rawText = await result.response.text();
+      console.log("Raw Gemini response:", rawText.substring(0, 200) + "..."); // Log part of the response for debugging
       
-      // Try to parse the response as JSON
+      // Clean the response to extract JSON
+      const cleanedText = this.extractJsonFromResponse(rawText);
+      console.log("Cleaned JSON:", cleanedText.substring(0, 200) + "..."); // Log part of the cleaned response
+      
+      // Try to parse the cleaned response as JSON
       try {
-        const data = JSON.parse(rawText);
+        const data = JSON.parse(cleanedText);
         
         // Basic validation that we got what we expected
         if (!data.title || !Array.isArray(data.slides)) {
+          console.error("Invalid response format - missing title or slides array:", data);
           throw new Error('Invalid response format from Gemini');
         }
         
@@ -94,6 +113,7 @@ export class GeminiService {
         };
       } catch (e) {
         console.error('Failed to parse Gemini response:', e);
+        console.error('Problematic JSON text:', cleanedText);
         throw new Error('Failed to parse presentation data from AI');
       }
     } catch (e) {
