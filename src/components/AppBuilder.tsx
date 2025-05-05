@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Presentation } from "@/lib/types";
@@ -56,14 +55,22 @@ export function AppBuilder() {
     try {
       setLoading(true);
       
-      // If no prompt is provided, default to generating content about India
-      const presentationPrompt = prompt && prompt.trim() !== "" ? prompt : "India: A Cultural and Historical Journey";
+      // Make sure we have a prompt
+      if (!prompt || prompt.trim() === "") {
+        toast({
+          title: "Missing Topic",
+          description: "Please provide a topic for your presentation.",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
+      }
       
       let newPresentation;
       
       try {
-        // Try to generate presentation content from Gemini
-        newPresentation = await geminiService.generatePresentation(presentationPrompt, slideCount);
+        // Generate presentation content from Gemini
+        newPresentation = await geminiService.generatePresentation(prompt, slideCount);
         
         // For each slide, generate an image based on the image prompt
         const updatedSlides = await Promise.all(
@@ -89,9 +96,14 @@ export function AppBuilder() {
         };
         
       } catch (apiError) {
-        console.log("API Generation failed, using fallback:", apiError);
-        // Use fallback presentation generator when API fails
-        newPresentation = generateFallbackPresentation(presentationPrompt, slideCount);
+        console.error("API Generation failed:", apiError);
+        toast({
+          title: "Generation Failed",
+          description: "Failed to generate presentation content. Please try again.",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
       }
       
       setPresentation(newPresentation);

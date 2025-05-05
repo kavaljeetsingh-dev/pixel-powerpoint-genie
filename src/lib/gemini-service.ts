@@ -30,30 +30,37 @@ export class GeminiService {
   }
 
   async generatePresentation(topic: string, slideCount: number): Promise<Presentation> {
-    // Create a default India-focused presentation if no specific topic is provided
-    const presentationTopic = topic && topic.trim() !== "" ? topic : "India: A Cultural and Historical Journey";
-    
     const systemPrompt = `
-      Create a professional presentation about "${presentationTopic}" with exactly ${slideCount} slides.
-      The presentation should focus on India, covering aspects such as its rich cultural heritage, 
-      historical importance, geographical diversity, economic development, and global significance.
+      You are an expert presentation generator AI.
       
-      Structure each slide with:
-      1. A clear, concise title related to India
-      2. 3-5 bullet points of relevant content about India
-      3. For each slide, suggest a prompt for generating an image related to India that would work well with the slide content
+      Your task is to create a detailed PowerPoint presentation on the topic: "${topic}".
       
-      Include data points about India that could be visualized in charts (every 4th slide should have numerical data 
-      about India that could be shown in a chart, such as population statistics, economic figures, or cultural demographics).
+      Requirements:
+      1. Generate exactly ${slideCount} slides.
+      2. For each slide, provide:
+         - A clear and relevant Slide Title
+         - 4 to 6 informative Bullet Points with in-depth, factual, and concise content (each bullet must add unique value).
+      3. Avoid slide numbers and fluff.
+      4. Maintain a consistent, professional tone suitable for students, professionals, or public speaking.
+      5. Format your output as structured JSON, with each slide as an object containing "title" and "content" (array of bullet points).
+      6. Ensure the content is specific to the topic and well-organized for presentation use.
+      7. For each slide, suggest a prompt for generating an image related to the slide content.
       
-      Format your response as a JSON object with this structure:
+      Output Format Expected:
+      
       {
-        "title": "Main Presentation Title About India",
+        "title": "Main Presentation Title",
         "slides": [
           {
-            "title": "Slide 1 Title",
-            "content": ["Bullet point 1 about India", "Bullet point 2 about India", "Bullet point 3 about India"],
-            "imagePrompt": "Description for generating an image of India"
+            "title": "Slide Title",
+            "content": [
+              "First bullet point with detailed information",
+              "Second bullet point with detailed information",
+              "Third bullet point with detailed information",
+              "Fourth bullet point with detailed information",
+              "Fifth bullet point with detailed information"
+            ],
+            "imagePrompt": "Description for generating an image that would work well with this slide"
           },
           ... more slides
         ]
@@ -81,7 +88,7 @@ export class GeminiService {
           slides: data.slides.map((slide: any) => ({
             title: slide.title,
             content: Array.isArray(slide.content) ? slide.content : [],
-            imagePrompt: slide.imagePrompt,
+            imagePrompt: slide.imagePrompt || `Image related to ${slide.title}`,
           })),
           theme: 'light', // Default theme
         };
@@ -96,18 +103,16 @@ export class GeminiService {
   }
 
   async generateImage(prompt: string): Promise<string> {
-    // Enhance the image prompt to generate India-related imagery
-    const enhancedPrompt = prompt.includes("India") ? 
-      prompt : 
-      `Image of India showing ${prompt}`;
+    // Enhance the image prompt to generate more relevant imagery
+    const enhancedPrompt = `${prompt}. High quality, professional presentation visual.`;
       
     // For now, we'll use placeholder images since Gemini doesn't generate images directly
     // In a real implementation, you might want to use another API like Dall-E or Stability
     const placeholders = [
-      'https://placehold.co/600x400/4f46e5/ffffff?text=India+Image',
-      'https://placehold.co/600x400/6366f1/ffffff?text=Indian+Culture', 
-      'https://placehold.co/600x400/8b5cf6/ffffff?text=Incredible+India',
-      'https://placehold.co/600x400/7c3aed/ffffff?text=Indian+Heritage'
+      'https://placehold.co/600x400/4f46e5/ffffff?text=' + encodeURIComponent(prompt.substring(0, 20)),
+      'https://placehold.co/600x400/6366f1/ffffff?text=' + encodeURIComponent(prompt.substring(0, 20)), 
+      'https://placehold.co/600x400/8b5cf6/ffffff?text=' + encodeURIComponent(prompt.substring(0, 20)),
+      'https://placehold.co/600x400/7c3aed/ffffff?text=' + encodeURIComponent(prompt.substring(0, 20))
     ];
     
     return placeholders[Math.floor(Math.random() * placeholders.length)];

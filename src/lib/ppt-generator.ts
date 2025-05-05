@@ -1,3 +1,4 @@
+
 import pptxgen from 'pptxgenjs';
 import { Presentation, SlideContent } from './types';
 
@@ -255,6 +256,7 @@ export const generatePPT = (presentation: Presentation): void => {
             h: 0.2,
             fill: { color: colorScheme.accent },
             line: { type: 'none' },
+            // Remove the radius property
           });
         });
       }
@@ -339,6 +341,7 @@ export const generatePPT = (presentation: Presentation): void => {
     fill: { color: colorScheme.accent + '22' },
     line: { color: colorScheme.accent, width: 3 },
     shadow: { type: 'outer', blur: 15, offset: 5, angle: 45, color: colorScheme.accent + '33' }
+    // Remove the radius property
   });
   
   finalSlide.addText('Thank You!', {
