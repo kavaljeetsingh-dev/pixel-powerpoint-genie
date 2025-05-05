@@ -47,7 +47,7 @@ const createChartSlide = (pptx: any, slideData: SlideContent, colorScheme: any, 
   });
   
   // Title underline
-  slide.addShape(pptx.ShapeType.LINE, {
+  slide.addShape('line', {
     x: 0.5,
     y: 1.4,
     w: '90%',
@@ -140,7 +140,7 @@ export const generatePPT = (presentation: Presentation): void => {
     });
     
     // Title underline with varied style
-    pptSlide.addShape(pptx.ShapeType.LINE, {
+    pptSlide.addShape('line', {
       x: layoutType === 1 ? '5%' : 0.5,
       y: layoutType === 2 ? 1.2 : 1.4,
       w: '90%',
@@ -152,7 +152,7 @@ export const generatePPT = (presentation: Presentation): void => {
     if (slide.content && slide.content.length > 0) {
       if (layoutType === 0) {
         // Standard layout
-        pptSlide.addShape(pptx.ShapeType.RECTANGLE, {
+        pptSlide.addShape('rectangle', {
           x: 0.4,
           y: 1.6,
           w: slide.imageUrl ? '55%' : '90%',
@@ -181,7 +181,7 @@ export const generatePPT = (presentation: Presentation): void => {
         const column2 = slide.content.slice(pointsPerColumn);
         
         // Column 1 background
-        pptSlide.addShape(pptx.ShapeType.RECTANGLE, {
+        pptSlide.addShape('rectangle', {
           x: 0.4,
           y: 1.6,
           w: '42%',
@@ -204,7 +204,7 @@ export const generatePPT = (presentation: Presentation): void => {
         });
         
         // Column 2 background
-        pptSlide.addShape(pptx.ShapeType.RECTANGLE, {
+        pptSlide.addShape('rectangle', {
           x: '50%',
           y: 1.6,
           w: '42%',
@@ -228,7 +228,7 @@ export const generatePPT = (presentation: Presentation): void => {
       }
       else if (layoutType === 2) {
         // Centered content layout with accent blocks
-        pptSlide.addShape(pptx.ShapeType.RECTANGLE, {
+        pptSlide.addShape('rectangle', {
           x: '10%',
           y: 1.4,
           w: '80%',
@@ -252,7 +252,7 @@ export const generatePPT = (presentation: Presentation): void => {
           });
           
           // Add small accent indicator
-          pptSlide.addShape(pptx.ShapeType.RECTANGLE, {
+          pptSlide.addShape('rectangle', {
             x: '12%',
             y: 1.72 + (i * 0.6),
             w: 0.2,
@@ -295,7 +295,7 @@ export const generatePPT = (presentation: Presentation): void => {
         });
         
         // Decorative frame around image
-        pptSlide.addShape(pptx.ShapeType.RECTANGLE, {
+        pptSlide.addShape('rectangle', {
           x: '65.8%',
           y: 1.6,
           w: 3.2,
@@ -334,7 +334,7 @@ export const generatePPT = (presentation: Presentation): void => {
   finalSlide.background = { color: colorScheme.background };
   
   // Add a decorative shape
-  finalSlide.addShape(pptx.ShapeType.RECTANGLE, {
+  finalSlide.addShape('rectangle', {
     x: '20%',
     y: 2,
     w: '60%',
