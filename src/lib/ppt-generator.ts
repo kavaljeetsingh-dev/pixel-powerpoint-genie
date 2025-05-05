@@ -16,7 +16,7 @@ const getThemeColors = (theme: string) => {
     case 'sunset':
       return { background: '#FFFBF5', text: '#7D3C98', accent: '#FF7F50' };
     case 'ocean':
-      return { background: '#EBF5FB', text: '#1A5276', accent: '#3498DB' };
+      return { background: '#EBF8FB', text: '#1A5276', accent: '#3498DB' };
     case 'forest':
       return { background: '#E8F8F5', text: '#145A32', accent: '#27AE60' };
     case 'royal':
@@ -31,8 +31,8 @@ const getThemeColors = (theme: string) => {
 const createChartSlide = (pptx: any, slideData: SlideContent, colorScheme: any, totalSlides: number, index: number) => {
   const slide = pptx.addSlide();
   
-  // Set background color with subtle transparency
-  slide.background = { color: colorScheme.background, transparency: 10 };
+  // Set background color
+  slide.background = { color: colorScheme.background };
   
   // Add title
   slide.addText(slideData.title, {
@@ -47,16 +47,17 @@ const createChartSlide = (pptx: any, slideData: SlideContent, colorScheme: any, 
   });
   
   // Title underline
-  slide.addShape(pptx.ShapeType.line, {
+  slide.addShape(pptx.ShapeType.LINE, {
     x: 0.5,
     y: 1.4,
     w: '90%',
+    h: 0,
     line: { color: colorScheme.accent, width: 2 },
   });
   
   // Add chart based on content data
   // This is a simple bar chart example
-  slide.addChart(pptx.ChartType.bar, 
+  slide.addChart(pptx.ChartType.BAR, 
     [
       { name: 'Point 1', labels: ['Category'], values: [75] },
       { name: 'Point 2', labels: ['Category'], values: [42] },
@@ -102,8 +103,8 @@ const createChartSlide = (pptx: any, slideData: SlideContent, colorScheme: any, 
 export const generatePPT = (presentation: Presentation): void => {
   const pptx = new pptxgen();
   
-  // Set presentation properties
-  pptx.layout = 'LAYOUT_16x9';  // Explicitly set 16:9 aspect ratio
+  // Set presentation properties with explicit 16:9 ratio
+  pptx.layout = 'LAYOUT_16x9';
   pptx.title = presentation.title;
   
   // Get color scheme based on theme
@@ -119,8 +120,8 @@ export const generatePPT = (presentation: Presentation): void => {
     
     const pptSlide = pptx.addSlide();
     
-    // Set background color with subtle transparency
-    pptSlide.background = { color: colorScheme.background, transparency: 10 };
+    // Set background color (no transparency in exported PPT)
+    pptSlide.background = { color: colorScheme.background };
     
     // Alternate between different layouts
     const layoutType = index % 3;
@@ -139,29 +140,30 @@ export const generatePPT = (presentation: Presentation): void => {
     });
     
     // Title underline with varied style
-    pptSlide.addShape(pptx.ShapeType.line, {
+    pptSlide.addShape(pptx.ShapeType.LINE, {
       x: layoutType === 1 ? '5%' : 0.5,
       y: layoutType === 2 ? 1.2 : 1.4,
       w: '90%',
+      h: 0,
       line: { color: colorScheme.accent, width: layoutType === 0 ? 2 : 3 },
     });
     
-    // Add semi-transparent box behind text for better readability
+    // Add content based on layout type
     if (slide.content && slide.content.length > 0) {
-      // Create background shape differently based on layout
       if (layoutType === 0) {
         // Standard layout
-        pptSlide.addShape(pptx.ShapeType.rect, {
+        pptSlide.addShape(pptx.ShapeType.RECTANGLE, {
           x: 0.4,
           y: 1.6,
           w: slide.imageUrl ? '55%' : '90%',
           h: 3.2,
-          fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : '#FFFFFF', transparency: 85 },
+          fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : colorScheme.background + '90' },
           line: { type: 'none' },
         });
         
         // Add content as bullet points
-        pptSlide.addText(slide.content.map(point => `• ${point}`).join('\n'), {
+        const contentText = slide.content.map(point => `• ${point}`).join('\n');
+        pptSlide.addText(contentText, {
           x: 0.5, 
           y: 1.7, 
           w: slide.imageUrl ? '55%' : '90%', 
@@ -179,17 +181,18 @@ export const generatePPT = (presentation: Presentation): void => {
         const column2 = slide.content.slice(pointsPerColumn);
         
         // Column 1 background
-        pptSlide.addShape(pptx.ShapeType.rect, {
+        pptSlide.addShape(pptx.ShapeType.RECTANGLE, {
           x: 0.4,
           y: 1.6,
           w: '42%',
           h: 3.2,
-          fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : '#FFFFFF', transparency: 85 },
+          fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : colorScheme.background + '90' },
           line: { type: 'none' },
         });
         
         // Column 1 content
-        pptSlide.addText(column1.map(point => `• ${point}`).join('\n'), {
+        const col1Text = column1.map(point => `• ${point}`).join('\n');
+        pptSlide.addText(col1Text, {
           x: 0.5, 
           y: 1.7, 
           w: '40%', 
@@ -201,17 +204,18 @@ export const generatePPT = (presentation: Presentation): void => {
         });
         
         // Column 2 background
-        pptSlide.addShape(pptx.ShapeType.rect, {
+        pptSlide.addShape(pptx.ShapeType.RECTANGLE, {
           x: '50%',
           y: 1.6,
           w: '42%',
           h: 3.2,
-          fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : '#FFFFFF', transparency: 85 },
+          fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : colorScheme.background + '90' },
           line: { type: 'none' },
         });
         
         // Column 2 content
-        pptSlide.addText(column2.map(point => `• ${point}`).join('\n'), {
+        const col2Text = column2.map(point => `• ${point}`).join('\n');
+        pptSlide.addText(col2Text, {
           x: '50.1%', 
           y: 1.7, 
           w: '40%', 
@@ -224,14 +228,13 @@ export const generatePPT = (presentation: Presentation): void => {
       }
       else if (layoutType === 2) {
         // Centered content layout with accent blocks
-        pptSlide.addShape(pptx.ShapeType.rect, {
+        pptSlide.addShape(pptx.ShapeType.RECTANGLE, {
           x: '10%',
           y: 1.4,
           w: '80%',
           h: 3.5,
-          fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : '#FFFFFF', transparency: 85 },
+          fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : colorScheme.background + '90' },
           line: { color: colorScheme.accent, width: 1, dashType: 'dash' },
-          shadow: { type: 'outer', blur: 3, offset: 2, angle: 45, color: colorScheme.accent + '40' }
         });
         
         // Add content with special formatting
@@ -249,14 +252,14 @@ export const generatePPT = (presentation: Presentation): void => {
           });
           
           // Add small accent indicator
-          pptSlide.addShape(pptx.ShapeType.roundRect, {
+          pptSlide.addShape(pptx.ShapeType.RECTANGLE, {
             x: '12%',
             y: 1.72 + (i * 0.6),
             w: 0.2,
             h: 0.2,
             fill: { color: colorScheme.accent },
             line: { type: 'none' },
-            // Remove the radius property
+            rectRadius: 2,
           });
         });
       }
@@ -280,7 +283,6 @@ export const generatePPT = (presentation: Presentation): void => {
           y: 5,
           w: 5, 
           h: 3,
-          shadow: { type: 'outer', blur: 10, offset: 3, angle: 45, color: 'aaaaaa77' }
         });
       } else {
         // Right-aligned image with border for layout 2
@@ -290,11 +292,10 @@ export const generatePPT = (presentation: Presentation): void => {
           y: 1.7,
           w: 3, 
           h: 3.2,
-          shadow: { type: 'outer', blur: 5, offset: 0, angle: 45, color: colorScheme.accent + '40' }
         });
         
         // Decorative frame around image
-        pptSlide.addShape(pptx.ShapeType.rect, {
+        pptSlide.addShape(pptx.ShapeType.RECTANGLE, {
           x: '65.8%',
           y: 1.6,
           w: 3.2,
@@ -330,18 +331,17 @@ export const generatePPT = (presentation: Presentation): void => {
   
   // Add a final "Thank You" slide with a dynamic design
   const finalSlide = pptx.addSlide();
-  finalSlide.background = { color: colorScheme.background, transparency: 10 };
+  finalSlide.background = { color: colorScheme.background };
   
   // Add a decorative shape
-  finalSlide.addShape(pptx.ShapeType.roundRect, {
+  finalSlide.addShape(pptx.ShapeType.RECTANGLE, {
     x: '20%',
     y: 2,
     w: '60%',
     h: 2.5,
     fill: { color: colorScheme.accent + '22' },
     line: { color: colorScheme.accent, width: 3 },
-    shadow: { type: 'outer', blur: 15, offset: 5, angle: 45, color: colorScheme.accent + '33' }
-    // Remove the radius property
+    rectRadius: 10,
   });
   
   finalSlide.addText('Thank You!', {

@@ -56,7 +56,7 @@ export class GeminiService {
       4. Maintain a consistent, professional tone suitable for students, professionals, or public speaking.
       5. Format your output as structured JSON, with each slide as an object containing "title" and "content" (array of bullet points).
       6. Ensure the content is specific to the topic and well-organized for presentation use.
-      7. For each slide, suggest a prompt for generating an image related to the slide content.
+      7. For each slide, provide a detailed and specific imagePrompt that describes a relevant image for that slide's content.
       
       Output Format Expected:
       
@@ -72,7 +72,7 @@ export class GeminiService {
               "Fourth bullet point with detailed information",
               "Fifth bullet point with detailed information"
             ],
-            "imagePrompt": "Description for generating an image that would work well with this slide"
+            "imagePrompt": "Detailed description for generating a high-quality image directly related to this specific slide's content"
           },
           ... more slides
         ]
@@ -107,7 +107,7 @@ export class GeminiService {
           slides: data.slides.map((slide: any) => ({
             title: slide.title,
             content: Array.isArray(slide.content) ? slide.content : [],
-            imagePrompt: slide.imagePrompt || `Image related to ${slide.title}`,
+            imagePrompt: slide.imagePrompt || `High quality presentation image about ${slide.title} related to ${topic}`,
           })),
           theme: 'light', // Default theme
         };
@@ -123,19 +123,31 @@ export class GeminiService {
   }
 
   async generateImage(prompt: string): Promise<string> {
-    // Enhance the image prompt to generate more relevant imagery
-    const enhancedPrompt = `${prompt}. High quality, professional presentation visual.`;
-      
-    // For now, we'll use placeholder images since Gemini doesn't generate images directly
-    // In a real implementation, you might want to use another API like Dall-E or Stability
-    const placeholders = [
-      'https://placehold.co/600x400/4f46e5/ffffff?text=' + encodeURIComponent(prompt.substring(0, 20)),
-      'https://placehold.co/600x400/6366f1/ffffff?text=' + encodeURIComponent(prompt.substring(0, 20)), 
-      'https://placehold.co/600x400/8b5cf6/ffffff?text=' + encodeURIComponent(prompt.substring(0, 20)),
-      'https://placehold.co/600x400/7c3aed/ffffff?text=' + encodeURIComponent(prompt.substring(0, 20))
-    ];
+    // Create a more specific and detailed image prompt
+    const enhancedPrompt = `Professional, high-quality presentation visual about: ${prompt}`;
     
-    return placeholders[Math.floor(Math.random() * placeholders.length)];
+    // Create more relevant placeholder images based on the topic with better visual indicators
+    // In a production environment, you would integrate with actual image generation APIs
+    
+    // Generate a deterministic but varied color based on the prompt content
+    const getColorFromPrompt = (text: string): string => {
+      let hash = 0;
+      for (let i = 0; i < text.length; i++) {
+        hash = text.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+      return "00000".substring(0, 6 - c.length) + c;
+    };
+    
+    // Use a more relevant visual reference based on the prompt
+    const bgColor = getColorFromPrompt(prompt);
+    const contrastColor = parseInt(bgColor.substring(0, 2), 16) > 128 ? '000000' : 'FFFFFF';
+    
+    // Create a more specialized placeholder based on the prompt topic
+    const encodedTopic = encodeURIComponent(prompt.substring(0, 30));
+    
+    // Return a more visually distinct and topic-relevant placeholder
+    return `https://placehold.co/1600x900/${bgColor}/${contrastColor}?text=${encodedTopic}`;
   }
 }
 
