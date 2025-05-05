@@ -51,53 +51,53 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
   // Features data
   const features = [
     {
-      icon: <MessageSquareIcon size={36} className="text-indigo-500" />, 
+      icon: <MessageSquareIcon size={36} className="text-indigo-500" />,
       title: "Chatbot Interface",
       description: "Describe your presentation topic to our AI and get personalized content."
     },
     {
-      icon: <FileIcon size={36} className="text-violet-500" />, 
+      icon: <FileIcon size={36} className="text-violet-500" />,
       title: "Custom Slides",
       description: "Choose how many slides you need, from 4 to 10, to match your presentation length."
     },
     {
-      icon: <ImageIcon size={36} className="text-purple-500" />, 
+      icon: <ImageIcon size={36} className="text-purple-500" />,
       title: "AI-Generated Images",
       description: "Our AI will create relevant visuals that enhance your presentation content."
     },
     {
-      icon: <LayoutIcon size={36} className="text-fuchsia-500" />, 
+      icon: <LayoutIcon size={36} className="text-fuchsia-500" />,
       title: "Beautiful Themes",
       description: "Choose between light and dark themes to match your presentation style."
     },
     {
-      icon: <PresentationIcon size={36} className="text-pink-500" />, 
+      icon: <PresentationIcon size={36} className="text-pink-500" />,
       title: "Export to PPT",
       description: "Download your presentation as a PowerPoint file ready to use."
     }
   ];
   
-  // Founders data (updated)
+  // Founders data
   const founders = [
     {
-      name: "Sanskar Dubey",
-      role: "Founder and Director",
-      image: "https://i.ibb.co/rfNgMTKQ/sanskar.jpg"
+      name: "Alex Johnson",
+      role: "CEO & Co-Founder",
+      image: "https://placehold.co/300x300/9b87f5/ffffff?text=Alex"
     },
     {
-      name: "Mohd Zaid Sayyed",
-      role: "Co-founder and Managing Director",
-      image: "https://i.ibb.co/KpbxmG3X/zaid.jpg"
+      name: "Sarah Chen",
+      role: "CTO & Co-Founder",
+      image: "https://placehold.co/300x300/8B5CF6/ffffff?text=Sarah"
     },
     {
-      name: "Shiva Pandey",
-      role: "Chief Operating Officer (COO)",
-      image: "https://i.ibb.co/9kJL6FqV/shiva.jpg"
+      name: "Michael Roberts",
+      role: "Head of AI",
+      image: "https://placehold.co/300x300/D946EF/ffffff?text=Michael"
     },
     {
-      name: "Devendra Singh",
-      role: "Chief Technology Officer",
-      image: "https://i.ibb.co/MDYttnhr/dev.jpg"
+      name: "Jessica Williams",
+      role: "Head of Design",
+      image: "https://placehold.co/300x300/F97316/ffffff?text=Jessica"
     }
   ];
 
@@ -109,7 +109,93 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
         className="min-h-screen hero-gradient flex flex-col items-center justify-center px-4 text-white relative overflow-hidden"
         style={{ y: heroY, opacity: heroOpacity }}
       >
-        {/* ...hero content unchanged... */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-white/10 filter blur-3xl"></div>
+          <div className="absolute bottom-1/3 right-1/3 w-96 h-96 rounded-full bg-purple-500/10 filter blur-3xl"></div>
+        </div>
+        
+        <motion.div 
+          className="max-w-3xl mx-auto text-center z-10"
+          initial={{ opacity: 0, y: 50 }}
+          animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <motion.div
+            className="flex items-center justify-center mb-6 space-x-4"
+            initial={{ scale: 0 }}
+            animate={heroInView ? { scale: 1, rotate: 360 } : { scale: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          >
+            <PresentationIcon size={50} />
+          </motion.div>
+          
+          <motion.h1 
+            className="text-4xl md:text-6xl font-bold mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            Create Amazing Presentations with AI
+          </motion.h1>
+          
+          <motion.p 
+            className="text-lg md:text-xl mb-8 text-indigo-100"
+            initial={{ opacity: 0, y: 20 }}
+            animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            Transform your ideas into professional PowerPoint presentations in seconds with our AI-powered platform.
+          </motion.p>
+          
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={heroInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <Button 
+              onClick={onGetStarted}
+              size="lg" 
+              className="bg-white text-indigo-600 hover:bg-indigo-100 rounded-full px-8 py-6 text-lg font-medium"
+            >
+              Get Started
+              <ArrowRightIcon className="ml-2 h-5 w-5" />
+            </Button>
+          </motion.div>
+        </motion.div>
+        
+        <motion.div 
+          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 cursor-pointer"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        >
+          <ArrowDownIcon className="h-10 w-10 opacity-70" />
+        </motion.div>
+        
+        <motion.div
+          className="absolute top-1/4 left-1/4 opacity-70"
+          animate={{ 
+            y: [0, -20, 0],
+            rotate: [0, 5, 0]
+          }}
+          transition={{ duration: 6, repeat: Infinity, repeatType: "reverse" }}
+        >
+          <div className="w-24 h-24 bg-white/20 backdrop-blur-lg rounded-lg shadow-xl flex items-center justify-center">
+            <PresentationIcon size={40} />
+          </div>
+        </motion.div>
+        
+        <motion.div
+          className="absolute bottom-1/4 right-1/4 opacity-70"
+          animate={{ 
+            y: [0, 20, 0],
+            rotate: [0, -5, 0]
+          }}
+          transition={{ duration: 7, repeat: Infinity, repeatType: "reverse", delay: 1 }}
+        >
+          <div className="w-20 h-20 bg-white/20 backdrop-blur-lg rounded-lg shadow-xl flex items-center justify-center">
+            <FileIcon size={30} />
+          </div>
+        </motion.div>
       </motion.div>
       
       {/* Features Section */}
@@ -120,61 +206,25 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
         initial="hidden"
         animate={featuresInView ? "visible" : "hidden"}
       >
-        {/* ...features content unchanged... */}
-      </motion.div>
-      
-      {/* Founders Section */}
-      <motion.div 
-        ref={foundersRef}
-        className="py-24 bg-gradient-to-b from-background to-background/80"
-        variants={staggerContainerVariants}
-        initial="hidden"
-        animate={foundersInView ? "visible" : "hidden"}
-      >
         <div className="container mx-auto px-4">
           <motion.h2 
-            className="text-3xl md:text-4xl font-bold text-center mb-4"
+            className="text-3xl md:text-4xl font-bold text-center mb-12"
             variants={itemVariants}
           >
-            Meet Our Team
+            Supercharge Your Presentations
           </motion.h2>
           
-          <motion.p
-            className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto"
-            variants={itemVariants}
-          >
-            The brilliant minds behind Pixel PowerPoint Genie
-          </motion.p>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {founders.map((founder, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
               <motion.div
                 key={index}
-                className="flex flex-col items-center text-center"
+                className="p-6 rounded-xl border border-border bg-card hover:shadow-lg transition-all"
                 variants={itemVariants}
-                whileHover={{ y: -5 }}
+                whileHover={{ y: -5, boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}
               >
-                <div className="mb-4 relative">
-                  <Avatar className="h-40 w-40 bg-white p-2 rounded-lg">
-                    <AvatarImage
-                      src={founder.image}
-                      alt={founder.name}
-                      className="object-contain"
-                    />
-                    <AvatarFallback className="text-2xl">
-                      {founder.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <motion.div 
-                    className="absolute -bottom-2 -right-2 bg-primary text-white p-1 rounded-full"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <Users size={18} />
-                  </motion.div>
-                </div>
-                <h3 className="text-xl font-semibold mb-1">{founder.name}</h3>
-                <p className="text-muted-foreground">{founder.role}</p>
+                <div className="mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -194,6 +244,126 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           </motion.div>
         </div>
       </motion.div>
-    </div>
-  );
-}
+      
+      {/* Founders Section */}
+     
+  
+        const founders = [
+          {
+            name: "Sanskar Dubey",
+            role: "Founder and Director",
+            image: "https://i.ibb.co/rfNgMTKQ/sanskar.jpg"
+          },
+          {
+            name: "Mohd Zaid Sayyed",
+            role: "Co-founder and Managing Director",
+            image: "https://i.ibb.co/KpbxmG3X/zaid.jpg"
+          },
+          {
+            name: "Shiva Pandey",
+            role: "Chief Operating Officer (COO)",
+            image: "https://i.ibb.co/9kJL6FqV/shiva.jpg"
+          },
+          {
+            name: "Devendra Singh",
+            role: "Chief Technology Officer",
+            image: "https://i.ibb.co/MDYttnhr/dev.jpg"
+          }
+        ];
+      
+        return (
+          <div ref={containerRef} className="min-h-screen overflow-hidden">
+            {/* Hero Section */}
+            <motion.div 
+              ref={heroRef}
+              className="min-h-screen hero-gradient flex flex-col items-center justify-center px-4 text-white relative overflow-hidden"
+              style={{ y: heroY, opacity: heroOpacity }}
+            >
+              {/* ...hero content unchanged... */}
+            </motion.div>
+            
+            {/* Features Section */}
+            <motion.div 
+              ref={featuresRef}
+              className="py-24 bg-background"
+              variants={staggerContainerVariants}
+              initial="hidden"
+              animate={featuresInView ? "visible" : "hidden"}
+            >
+              {/* ...features content unchanged... */}
+            </motion.div>
+            
+            {/* Founders Section */}
+            <motion.div 
+              ref={foundersRef}
+              className="py-24 bg-gradient-to-b from-background to-background/80"
+              variants={staggerContainerVariants}
+              initial="hidden"
+              animate={foundersInView ? "visible" : "hidden"}
+            >
+              <div className="container mx-auto px-4">
+                <motion.h2 
+                  className="text-3xl md:text-4xl font-bold text-center mb-4"
+                  variants={itemVariants}
+                >
+                  Meet Our Team
+                </motion.h2>
+                
+                <motion.p
+                  className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto"
+                  variants={itemVariants}
+                >
+                  The brilliant minds behind Pixel PowerPoint Genie
+                </motion.p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                  {founders.map((founder, index) => (
+                    <motion.div
+                      key={index}
+                      className="flex flex-col items-center text-center"
+                      variants={itemVariants}
+                      whileHover={{ y: -5 }}
+                    >
+                      <div className="mb-4 relative">
+                        <Avatar className="h-40 w-40 bg-white p-2 rounded-lg">
+                          <AvatarImage
+                            src={founder.image}
+                            alt={founder.name}
+                            className="object-contain"
+                          />
+                          <AvatarFallback className="text-2xl">
+                            {founder.name.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <motion.div 
+                          className="absolute -bottom-2 -right-2 bg-primary text-white p-1 rounded-full"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          <Users size={18} />
+                        </motion.div>
+                      </div>
+                      <h3 className="text-xl font-semibold mb-1">{founder.name}</h3>
+                      <p className="text-muted-foreground">{founder.role}</p>
+                    </motion.div>
+                  ))}
+                </div>
+                
+                <motion.div 
+                  className="mt-16 text-center"
+                  variants={itemVariants}
+                >
+                  <Button 
+                    onClick={onGetStarted}
+                    size="lg" 
+                    className="bg-primary hover:bg-primary/90 rounded-full px-8 py-6 text-lg font-medium"
+                  >
+                    Create Your Presentation Now
+                    <ArrowRightIcon className="ml-2 h-5 w-5" />
+                  </Button>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        );
+      }
