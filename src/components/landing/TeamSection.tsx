@@ -37,7 +37,7 @@ export function TeamSection({ onGetStarted }: TeamSectionProps) {
       name: "Kavaljeet Singh",
       role: "Founder and Director",
       description: "MERN Stack developer, AI Engineer",
-      image: "https://i.ibb.co/R4G74m3",
+      image: "https://i.ibb.co/R4G74m3/kavaljeet.jpg",
       skills: ["MERN Stack", "AI", "Open Source"],
     },
   ];
