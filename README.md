@@ -1,7 +1,7 @@
 # Welcome to pixel-powerpoint-genie
 
 ## Project info
-# url: https://pptgeneratorbot.netlify.app/
+# url: pixel-powerpoint-genie-86.lovable.app
 ## How can I edit this code?
 
 There are several ways of editing your application.
