@@ -246,124 +246,70 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
       </motion.div>
       
       {/* Founders Section */}
-     
-  
-        const founders = [
-          {
-            name: "Sanskar Dubey",
-            role: "Founder and Director",
-            image: "https://i.ibb.co/rfNgMTKQ/sanskar.jpg"
-          },
-          {
-            name: "Mohd Zaid Sayyed",
-            role: "Co-founder and Managing Director",
-            image: "https://i.ibb.co/KpbxmG3X/zaid.jpg"
-          },
-          {
-            name: "Shiva Pandey",
-            role: "Chief Operating Officer (COO)",
-            image: "https://i.ibb.co/9kJL6FqV/shiva.jpg"
-          },
-          {
-            name: "Devendra Singh",
-            role: "Chief Technology Officer",
-            image: "https://i.ibb.co/MDYttnhr/dev.jpg"
-          }
-        ];
-      
-        return (
-          <div ref={containerRef} className="min-h-screen overflow-hidden">
-            {/* Hero Section */}
-            <motion.div 
-              ref={heroRef}
-              className="min-h-screen hero-gradient flex flex-col items-center justify-center px-4 text-white relative overflow-hidden"
-              style={{ y: heroY, opacity: heroOpacity }}
-            >
-              {/* ...hero content unchanged... */}
-            </motion.div>
-            
-            {/* Features Section */}
-            <motion.div 
-              ref={featuresRef}
-              className="py-24 bg-background"
-              variants={staggerContainerVariants}
-              initial="hidden"
-              animate={featuresInView ? "visible" : "hidden"}
-            >
-              {/* ...features content unchanged... */}
-            </motion.div>
-            
-            {/* Founders Section */}
-            <motion.div 
-              ref={foundersRef}
-              className="py-24 bg-gradient-to-b from-background to-background/80"
-              variants={staggerContainerVariants}
-              initial="hidden"
-              animate={foundersInView ? "visible" : "hidden"}
-            >
-              <div className="container mx-auto px-4">
-                <motion.h2 
-                  className="text-3xl md:text-4xl font-bold text-center mb-4"
-                  variants={itemVariants}
-                >
-                  Meet Our Team
-                </motion.h2>
-                
-                <motion.p
-                  className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto"
-                  variants={itemVariants}
-                >
-                  The brilliant minds behind Pixel PowerPoint Genie
-                </motion.p>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {founders.map((founder, index) => (
-                    <motion.div
-                      key={index}
-                      className="flex flex-col items-center text-center"
-                      variants={itemVariants}
-                      whileHover={{ y: -5 }}
-                    >
-                      <div className="mb-4 relative">
-                        <Avatar className="h-40 w-40 bg-white p-2 rounded-lg">
-                          <AvatarImage
-                            src={founder.image}
-                            alt={founder.name}
-                            className="object-contain"
-                          />
-                          <AvatarFallback className="text-2xl">
-                            {founder.name.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <motion.div 
-                          className="absolute -bottom-2 -right-2 bg-primary text-white p-1 rounded-full"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <Users size={18} />
-                        </motion.div>
-                      </div>
-                      <h3 className="text-xl font-semibold mb-1">{founder.name}</h3>
-                      <p className="text-muted-foreground">{founder.role}</p>
-                    </motion.div>
-                  ))}
-                </div>
-                
-                <motion.div 
-                  className="mt-16 text-center"
-                  variants={itemVariants}
-                >
-                  <Button 
-                    onClick={onGetStarted}
-                    size="lg" 
-                    className="bg-primary hover:bg-primary/90 rounded-full px-8 py-6 text-lg font-medium"
+      <motion.div 
+        ref={foundersRef}
+        className="py-24 bg-gradient-to-b from-background to-background/80"
+        variants={staggerContainerVariants}
+        initial="hidden"
+        animate={foundersInView ? "visible" : "hidden"}
+      >
+        <div className="container mx-auto px-4">
+          <motion.h2 
+            className="text-3xl md:text-4xl font-bold text-center mb-4"
+            variants={itemVariants}
+          >
+            Meet Our Team
+          </motion.h2>
+          
+          <motion.p
+            className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto"
+            variants={itemVariants}
+          >
+            The brilliant minds behind Pixel PowerPoint Genie
+          </motion.p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {founders.map((founder, index) => (
+              <motion.div
+                key={index}
+                className="flex flex-col items-center text-center"
+                variants={itemVariants}
+                whileHover={{ y: -5 }}
+              >
+                <div className="mb-4 relative">
+                  <Avatar className="h-32 w-32 border-4 border-primary/20">
+                    <AvatarImage src={founder.image} alt={founder.name} />
+                    <AvatarFallback>{founder.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <motion.div 
+                    className="absolute -bottom-2 -right-2 bg-primary text-white p-1 rounded-full"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                   >
-                    Create Your Presentation Now
-                    <ArrowRightIcon className="ml-2 h-5 w-5" />
-                  </Button>
-                </motion.div>
-              </div>
-            </motion.div>
+                    <Users size={18} />
+                  </motion.div>
+                </div>
+                <h3 className="text-xl font-semibold mb-1">{founder.name}</h3>
+                <p className="text-muted-foreground">{founder.role}</p>
+              </motion.div>
+            ))}
           </div>
-        );
-      }
+          
+          <motion.div 
+            className="mt-16 text-center"
+            variants={itemVariants}
+          >
+            <Button 
+              onClick={onGetStarted}
+              size="lg" 
+              className="bg-primary hover:bg-primary/90 rounded-full px-8 py-6 text-lg font-medium"
+            >
+              Create Your Presentation Now
+              <ArrowRightIcon className="ml-2 h-5 w-5" />
+            </Button>
+          </motion.div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
