@@ -152,7 +152,7 @@ export const generatePPT = (presentation: Presentation): void => {
     if (slide.content && slide.content.length > 0) {
       if (layoutType === 0) {
         // Standard layout
-        pptSlide.addShape('rectangle', {
+        pptSlide.addShape(pptx.ShapeType.rect, {
           x: 0.4,
           y: 1.6,
           w: slide.imageUrl ? '55%' : '90%',
@@ -181,7 +181,7 @@ export const generatePPT = (presentation: Presentation): void => {
         const column2 = slide.content.slice(pointsPerColumn);
         
         // Column 1 background
-        pptSlide.addShape('rectangle', {
+        pptSlide.addShape(pptx.ShapeType.rect, {
           x: 0.4,
           y: 1.6,
           w: '42%',
@@ -204,7 +204,7 @@ export const generatePPT = (presentation: Presentation): void => {
         });
         
         // Column 2 background
-        pptSlide.addShape('rectangle', {
+        pptSlide.addShape(pptx.ShapeType.rect, {
           x: '50%',
           y: 1.6,
           w: '42%',
@@ -228,7 +228,7 @@ export const generatePPT = (presentation: Presentation): void => {
       }
       else if (layoutType === 2) {
         // Centered content layout with accent blocks
-        pptSlide.addShape('rectangle', {
+        pptSlide.addShape(pptx.ShapeType.rect, {
           x: '10%',
           y: 1.4,
           w: '80%',
@@ -252,7 +252,7 @@ export const generatePPT = (presentation: Presentation): void => {
           });
           
           // Add small accent indicator
-          pptSlide.addShape('rectangle', {
+          pptSlide.addShape(pptx.ShapeType.rect, {
             x: '12%',
             y: 1.72 + (i * 0.6),
             w: 0.2,
@@ -295,7 +295,7 @@ export const generatePPT = (presentation: Presentation): void => {
         });
         
         // Decorative frame around image
-        pptSlide.addShape('rectangle', {
+        pptSlide.addShape(pptx.ShapeType.rect, {
           x: '65.8%',
           y: 1.6,
           w: 3.2,
@@ -334,7 +334,7 @@ export const generatePPT = (presentation: Presentation): void => {
   finalSlide.background = { color: colorScheme.background };
   
   // Add a decorative shape
-  finalSlide.addShape('rectangle', {
+  finalSlide.addShape(pptx.ShapeType.rect, {
     x: '20%',
     y: 2,
     w: '60%',
