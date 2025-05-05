@@ -83,35 +83,14 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
     },
   ];
 
-  // Updated Founders data
+  // Updated Founder data with only Kavaljeet Singh
   const founders = [
     {
-      name: "Sanskar Dubey",
+      name: "Kavaljeet Singh",
       role: "Founder and Director",
-      description: "MediaWiki Open source Contributor, MERN Stack developer, AI Engineer",
-      image: "https://i.ibb.co/rfNgMTKQ/sanskar.jpg",
+      description: "MERN Stack developer, AI Engineer",
+      image: "https://i.ibb.co/R4G74m3",
       skills: ["MERN Stack", "AI", "Open Source"],
-    },
-    {
-      name: "Mohd Zaid Sayyed",
-      role: "Co-founder and Managing Director",
-      description: "@GDG Prayagraj | Hackathons Winner | App Developer (Flutter/Dart)",
-      image: "https://i.ibb.co/KpbxmG3X/zaid.jpg",
-      skills: ["Flutter", "Dart", "Mobile Development"],
-    },
-    {
-      name: "Shiva Pandey",
-      role: "Chief Operating Officer (COO)",
-      description: "Next.js Web Developer || Python (Gen AI/ML/Deep Learning) || Hackathon Winner",
-      image: "https://i.ibb.co/9kJL6FqV/shiva.jpg",
-      skills: ["Next.js", "Python", "AI/ML"],
-    },
-    {
-      name: "Devendra Singh",
-      role: "Chief Technology Officer",
-      description: "Full Stack Web Developer || Python & ML enthusiast || GSSoC'24",
-      image: "https://i.ibb.co/MDYttnhr/dev.jpg",
-      skills: ["Full Stack", "Python", "ML"],
     },
   ];
 
@@ -238,11 +217,11 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             Meet Our Team
           </motion.h2>
           <motion.p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto" variants={itemVariants}>
-            The brilliant minds behind Pixel PowerPoint Genie
+            The brilliant mind behind Pixel PowerPoint Genie
           </motion.p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="flex justify-center">
             {founders.map((founder, idx) => (
-              <motion.div key={idx} className="flex flex-col items-center text-center" variants={itemVariants} whileHover={{ y: -5 }}>
+              <motion.div key={idx} className="flex flex-col items-center text-center max-w-sm" variants={itemVariants} whileHover={{ y: -5 }}>
                 <div className="mb-4 relative">
                   <Avatar className="h-40 w-40 bg-white p-2 rounded-lg">
                     <AvatarImage src={founder.image} alt={founder.name} className="object-contain" />
