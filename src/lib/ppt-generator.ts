@@ -102,7 +102,7 @@ export const generatePPT = (presentation: Presentation): void => {
   const pptx = new pptxgen();
   
   // Set presentation properties
-  pptx.layout = 'LAYOUT_16x9';
+  pptx.layout = 'LAYOUT_16x9';  // Explicitly set 16:9 aspect ratio
   pptx.title = presentation.title;
   
   // Get color scheme based on theme

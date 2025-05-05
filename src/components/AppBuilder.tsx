@@ -15,24 +15,38 @@ export function AppBuilder() {
 
   // Fallback presentation generator when API isn't available
   const generateFallbackPresentation = (topic: string, slideCount: number): Presentation => {
+    // If no topic is provided, default to India
+    const presentationTopic = topic && topic.trim() !== "" ? topic : "India: A Cultural and Historical Journey";
+    
     const slides = [];
-    const topics = ["Introduction", "Key Points", "Analysis", "Benefits", "Challenges", "Case Study", "Statistics", "Future Trends", "Conclusion", "Q&A"];
+    const topics = [
+      "Introduction to India", 
+      "Rich Cultural Heritage", 
+      "Historical Timeline", 
+      "Geographical Diversity", 
+      "Economic Growth", 
+      "Indian Cuisine", 
+      "Art and Architecture", 
+      "Modern India", 
+      "Global Influence", 
+      "Future Prospects"
+    ];
     
     for (let i = 0; i < slideCount; i++) {
       slides.push({
-        title: i < topics.length ? `${topics[i]}` : `Slide ${i + 1}`,
+        title: i < topics.length ? `${topics[i]}` : `Aspect of India ${i + 1}`,
         content: [
-          `${topic} point 1`,
-          `${topic} point 2`,
-          `${topic} point 3`,
+          `${presentationTopic} point 1`,
+          `${presentationTopic} point 2`,
+          `${presentationTopic} point 3`,
         ],
-        imagePrompt: `Image related to ${topic}`,
-        imageUrl: `https://placehold.co/600x400/${Math.floor(Math.random()*16777215).toString(16)}/ffffff?text=${encodeURIComponent(topic)}+${i+1}`
+        imagePrompt: `Image related to ${presentationTopic} - ${topics[i % topics.length]}`,
+        imageUrl: `https://placehold.co/600x400/${Math.floor(Math.random()*16777215).toString(16)}/ffffff?text=India+${i+1}`
       });
     }
     
     return {
-      title: `Presentation on ${topic}`,
+      title: `Presentation on ${presentationTopic}`,
       slides,
       theme: selectedTheme
     };
@@ -42,11 +56,14 @@ export function AppBuilder() {
     try {
       setLoading(true);
       
+      // If no prompt is provided, default to generating content about India
+      const presentationPrompt = prompt && prompt.trim() !== "" ? prompt : "India: A Cultural and Historical Journey";
+      
       let newPresentation;
       
       try {
         // Try to generate presentation content from Gemini
-        newPresentation = await geminiService.generatePresentation(prompt, slideCount);
+        newPresentation = await geminiService.generatePresentation(presentationPrompt, slideCount);
         
         // For each slide, generate an image based on the image prompt
         const updatedSlides = await Promise.all(
@@ -74,7 +91,7 @@ export function AppBuilder() {
       } catch (apiError) {
         console.log("API Generation failed, using fallback:", apiError);
         // Use fallback presentation generator when API fails
-        newPresentation = generateFallbackPresentation(prompt, slideCount);
+        newPresentation = generateFallbackPresentation(presentationPrompt, slideCount);
       }
       
       setPresentation(newPresentation);

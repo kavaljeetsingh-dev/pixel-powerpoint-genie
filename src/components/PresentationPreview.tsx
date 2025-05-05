@@ -104,18 +104,20 @@ export function PresentationPreview({ presentation, loading }: PresentationPrevi
       </div>
 
       <div className="flex-grow flex flex-col items-center justify-center p-4 overflow-hidden" ref={previewRef}>
-        <div className="w-full max-w-2xl slide-container">
+        {/* Apply 16:9 aspect ratio container */}
+        <div className="w-full max-w-4xl relative" style={{ paddingBottom: "56.25%" }}>
           <motion.div
             key={currentSlide}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
-            className="slide p-6 rounded-lg shadow-lg"
+            className="slide p-6 rounded-lg shadow-lg absolute inset-0"
             style={{ 
               backgroundColor: themeColors.background,
               color: themeColors.text,
-              backgroundImage: `radial-gradient(circle at 10% 20%, ${themeColors.background}99 0%, ${themeColors.background} 90%)` 
+              backgroundImage: `radial-gradient(circle at 10% 20%, ${themeColors.background}99 0%, ${themeColors.background} 90%)`,
+              overflow: "hidden"
             }}
           >
             {/* Slide branding */}
@@ -265,7 +267,7 @@ export function PresentationPreview({ presentation, loading }: PresentationPrevi
             )}
             
             {/* Slide number */}
-            <div className="mt-4 text-right text-xs opacity-70" style={{ color: themeColors.text }}>
+            <div className="absolute bottom-2 right-4 text-xs opacity-70" style={{ color: themeColors.text }}>
               {currentSlide + 1} / {presentation.slides.length}
             </div>
           </motion.div>
