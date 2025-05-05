@@ -50,13 +50,14 @@ export class GeminiService {
       Requirements:
       1. Generate exactly ${slideCount} slides.
       2. For each slide, provide:
-         - A clear and relevant Slide Title
-         - 4 to 6 informative Bullet Points with in-depth, factual, and concise content (each bullet must add unique value).
-      3. Avoid slide numbers and fluff.
-      4. Maintain a consistent, professional tone suitable for students, professionals, or public speaking.
-      5. Format your output as structured JSON, with each slide as an object containing "title" and "content" (array of bullet points).
-      6. Ensure the content is specific to the topic and well-organized for presentation use.
-      7. For each slide, provide a detailed and specific imagePrompt that describes a relevant image for that slide's content.
+         - A clear and concise Slide Title (under 8 words)
+         - 4 to 6 bullet points that are concise (max 20 words each) and informative
+      3. Format each slide for readability: use concise bullets (under 20 words), limit to 5-6 points per slide, and structure it so it fits well on a standard 16:9 PowerPoint slide.
+      4. Avoid slide numbers and fluff.
+      5. Maintain a professional tone suitable for students, professionals, or public speaking.
+      6. Format your output as structured JSON, with each slide as an object containing "title" and "content" (array of bullet points).
+      7. Ensure the content is specific to the topic and well-organized for presentation use.
+      8. For each slide, provide a detailed and specific imagePrompt that clearly describes what should be in the image, including specific visual elements, style, and composition directly related to that slide's content.
       
       Output Format Expected:
       
@@ -64,15 +65,15 @@ export class GeminiService {
         "title": "Main Presentation Title",
         "slides": [
           {
-            "title": "Slide Title",
+            "title": "Concise Slide Title",
             "content": [
-              "First bullet point with detailed information",
-              "Second bullet point with detailed information",
-              "Third bullet point with detailed information",
-              "Fourth bullet point with detailed information",
-              "Fifth bullet point with detailed information"
+              "First concise bullet point (under 20 words)",
+              "Second concise bullet point (under 20 words)",
+              "Third concise bullet point (under 20 words)",
+              "Fourth concise bullet point (under 20 words)",
+              "Fifth concise bullet point (under 20 words)"
             ],
-            "imagePrompt": "Detailed description for generating a high-quality image directly related to this specific slide's content"
+            "imagePrompt": "Detailed description for generating a relevant, professional image that shows [specific visual elements] in [specific style] related to this slide"
           },
           ... more slides
         ]
@@ -106,8 +107,8 @@ export class GeminiService {
           title: data.title,
           slides: data.slides.map((slide: any) => ({
             title: slide.title,
-            content: Array.isArray(slide.content) ? slide.content : [],
-            imagePrompt: slide.imagePrompt || `High quality presentation image about ${slide.title} related to ${topic}`,
+            content: Array.isArray(slide.content) ? slide.content.slice(0, 6) : [], // Limit to max 6 bullet points
+            imagePrompt: slide.imagePrompt || `High quality professional presentation image about ${slide.title} related to ${topic} with clear visual elements, suitable for 16:9 slide format`,
           })),
           theme: 'light', // Default theme
         };
@@ -123,12 +124,10 @@ export class GeminiService {
   }
 
   async generateImage(prompt: string): Promise<string> {
-    // Create a more specific and detailed image prompt
-    const enhancedPrompt = `Professional, high-quality presentation visual about: ${prompt}`;
+    // Create a more specific and detailed image prompt for 16:9 ratio
+    const enhancedPrompt = `Professional, high-quality presentation visual with 16:9 ratio about: ${prompt}. The image should be clean, well-composed, and suitable for business presentations.`;
     
-    // Create more relevant placeholder images based on the topic with better visual indicators
     // In a production environment, you would integrate with actual image generation APIs
-    
     // Generate a deterministic but varied color based on the prompt content
     const getColorFromPrompt = (text: string): string => {
       let hash = 0;
@@ -143,10 +142,10 @@ export class GeminiService {
     const bgColor = getColorFromPrompt(prompt);
     const contrastColor = parseInt(bgColor.substring(0, 2), 16) > 128 ? '000000' : 'FFFFFF';
     
-    // Create a more specialized placeholder based on the prompt topic
+    // Create a placeholder that matches 16:9 ratio exactly
     const encodedTopic = encodeURIComponent(prompt.substring(0, 30));
     
-    // Return a more visually distinct and topic-relevant placeholder
+    // Return a placeholder with 16:9 ratio (1600x900)
     return `https://placehold.co/1600x900/${bgColor}/${contrastColor}?text=${encodedTopic}`;
   }
 }

@@ -1,4 +1,3 @@
-
 import pptxgen from 'pptxgenjs';
 import { Presentation, SlideContent } from './types';
 
@@ -27,14 +26,14 @@ const getThemeColors = (theme: string) => {
   }
 };
 
-// Helper function to create chart slide
+// Helper function to create chart slide with improved layout
 const createChartSlide = (pptx: any, slideData: SlideContent, colorScheme: any, totalSlides: number, index: number) => {
   const slide = pptx.addSlide();
   
   // Set background color
   slide.background = { color: colorScheme.background };
   
-  // Add title
+  // Add title with proper font size for 16:9 ratio
   slide.addText(slideData.title, {
     x: 0.5, 
     y: 0.5, 
@@ -43,7 +42,7 @@ const createChartSlide = (pptx: any, slideData: SlideContent, colorScheme: any, 
     fontSize: 36, 
     color: colorScheme.accent,
     bold: true,
-    fontFace: 'Arial',
+    fontFace: 'Calibri',
   });
   
   // Title underline
@@ -56,7 +55,6 @@ const createChartSlide = (pptx: any, slideData: SlideContent, colorScheme: any, 
   });
   
   // Add chart based on content data
-  // This is a simple bar chart example
   slide.addChart(pptx.ChartType.BAR, 
     [
       { name: 'Point 1', labels: ['Category'], values: [75] },
@@ -83,7 +81,7 @@ const createChartSlide = (pptx: any, slideData: SlideContent, colorScheme: any, 
     h: 0.3, 
     fontSize: 12, 
     color: colorScheme.text,
-    fontFace: 'Arial',
+    fontFace: 'Calibri',
     align: 'right',
   });
   
@@ -100,17 +98,31 @@ const createChartSlide = (pptx: any, slideData: SlideContent, colorScheme: any, 
   return slide;
 };
 
+// Function to truncate text to maximum length to fit slides
+const truncateBulletPoint = (text: string, maxWords = 20): string => {
+  const words = text.split(' ');
+  if (words.length <= maxWords) return text;
+  return words.slice(0, maxWords).join(' ') + '...';
+};
+
 export const generatePPT = (presentation: Presentation): void => {
   const pptx = new pptxgen();
   
-  // Set presentation properties with explicit 16:9 ratio
+  // Set presentation properties with explicit 16:9 ratio dimensions
   pptx.layout = 'LAYOUT_16x9';
   pptx.title = presentation.title;
+  
+  // Set slide size to 13.33 x 7.5 inches (standard 16:9)
+  pptx.defineLayout({
+    name: 'LAYOUT_16x9',
+    width: 13.33,
+    height: 7.5
+  });
   
   // Get color scheme based on theme
   const colorScheme = getThemeColors(presentation.theme || 'light');
   
-  // Add each slide with varied layouts
+  // Add each slide with proper Title + Content layout
   presentation.slides.forEach((slide: SlideContent, index: number) => {
     // Determine if this should be a chart slide (every 4th slide for example)
     if (index > 0 && index % 4 === 0 && slide.content && slide.content.length >= 3) {
@@ -120,22 +132,22 @@ export const generatePPT = (presentation: Presentation): void => {
     
     const pptSlide = pptx.addSlide();
     
-    // Set background color (no transparency in exported PPT)
+    // Set background color
     pptSlide.background = { color: colorScheme.background };
     
     // Alternate between different layouts
     const layoutType = index % 3;
     
-    // Add title
+    // Add title with consistent fonts and sizes
     pptSlide.addText(slide.title, {
       x: 0.5, 
-      y: layoutType === 2 ? 0.3 : 0.5, 
+      y: 0.5, 
       w: '90%', 
       h: 1, 
       fontSize: 36, 
       color: colorScheme.accent,
       bold: true,
-      fontFace: 'Arial',
+      fontFace: 'Calibri',
       align: layoutType === 1 ? 'center' : 'left',
     });
     
@@ -148,44 +160,51 @@ export const generatePPT = (presentation: Presentation): void => {
       line: { color: colorScheme.accent, width: layoutType === 0 ? 2 : 3 },
     });
     
-    // Add content based on layout type
-    if (slide.content && slide.content.length > 0) {
+    // Limit bullet points to 6 maximum per slide and truncate long text
+    const contentToDisplay = slide.content ? 
+      slide.content.slice(0, 6).map(point => truncateBulletPoint(point)) : 
+      [];
+    
+    // Add content based on layout type with proper font size and spacing
+    if (contentToDisplay.length > 0) {
       if (layoutType === 0) {
-        // Standard layout
+        // Standard Title + Content layout
         pptSlide.addShape(pptx.ShapeType.rect, {
           x: 0.4,
           y: 1.6,
           w: slide.imageUrl ? '55%' : '90%',
-          h: 3.2,
+          h: 4.5,
           fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : colorScheme.background + '90' },
           line: { type: 'none' },
         });
         
-        // Add content as bullet points
-        const contentText = slide.content.map(point => `• ${point}`).join('\n');
+        // Add content as bullet points with proper formatting
+        const contentText = contentToDisplay.map(point => `• ${point}`).join('\n');
         pptSlide.addText(contentText, {
           x: 0.5, 
           y: 1.7, 
           w: slide.imageUrl ? '55%' : '90%', 
-          h: 3, 
-          fontSize: 20, 
+          h: 4.3, 
+          fontSize: 24, 
           color: colorScheme.text,
-          fontFace: 'Arial',
-          lineSpacing: 28,
+          fontFace: 'Calibri',
+          lineSpacing: 32, // Increased for better readability
+          wrap: true,
+          breakLine: true,
         });
       } 
       else if (layoutType === 1) {
-        // Two-column layout
-        const pointsPerColumn = Math.ceil(slide.content.length / 2);
-        const column1 = slide.content.slice(0, pointsPerColumn);
-        const column2 = slide.content.slice(pointsPerColumn);
+        // Two-column layout (useful when you have many points but want to keep them on one slide)
+        const pointsPerColumn = Math.ceil(contentToDisplay.length / 2);
+        const column1 = contentToDisplay.slice(0, pointsPerColumn);
+        const column2 = contentToDisplay.slice(pointsPerColumn);
         
         // Column 1 background
         pptSlide.addShape(pptx.ShapeType.rect, {
           x: 0.4,
           y: 1.6,
           w: '42%',
-          h: 3.2,
+          h: 4.5,
           fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : colorScheme.background + '90' },
           line: { type: 'none' },
         });
@@ -196,11 +215,13 @@ export const generatePPT = (presentation: Presentation): void => {
           x: 0.5, 
           y: 1.7, 
           w: '40%', 
-          h: 3, 
-          fontSize: 20, 
+          h: 4.3, 
+          fontSize: 22, 
           color: colorScheme.text,
-          fontFace: 'Arial',
-          lineSpacing: 28,
+          fontFace: 'Calibri',
+          lineSpacing: 30,
+          wrap: true,
+          breakLine: true,
         });
         
         // Column 2 background
@@ -208,7 +229,7 @@ export const generatePPT = (presentation: Presentation): void => {
           x: '50%',
           y: 1.6,
           w: '42%',
-          h: 3.2,
+          h: 4.5,
           fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : colorScheme.background + '90' },
           line: { type: 'none' },
         });
@@ -219,11 +240,13 @@ export const generatePPT = (presentation: Presentation): void => {
           x: '50.1%', 
           y: 1.7, 
           w: '40%', 
-          h: 3, 
-          fontSize: 20, 
+          h: 4.3, 
+          fontSize: 22, 
           color: colorScheme.text,
-          fontFace: 'Arial',
-          lineSpacing: 28,
+          fontFace: 'Calibri',
+          lineSpacing: 30,
+          wrap: true,
+          breakLine: true,
         });
       }
       else if (layoutType === 2) {
@@ -232,29 +255,31 @@ export const generatePPT = (presentation: Presentation): void => {
           x: '10%',
           y: 1.4,
           w: '80%',
-          h: 3.5,
+          h: 4.5,
           fill: { color: colorScheme.background === '#FFFFFF' ? '#F8F8F8' : colorScheme.background + '90' },
           line: { color: colorScheme.accent, width: 1, dashType: 'dash' },
         });
         
-        // Add content with special formatting
-        slide.content.forEach((point, i) => {
+        // Add content with special formatting - limited to 6 items
+        contentToDisplay.forEach((point, i) => {
           pptSlide.addText(`${i+1}. ${point}`, {
             x: '15%', 
-            y: 1.6 + (i * 0.6), 
+            y: 1.6 + (i * 0.7), // Increased spacing between points
             w: '70%', 
-            h: 0.5, 
-            fontSize: 18, 
+            h: 0.6, 
+            fontSize: 20, 
             color: colorScheme.text,
-            fontFace: 'Arial',
+            fontFace: 'Calibri',
             bullet: false,
             bold: i === 0, // Bold the first point
+            wrap: true,
+            breakLine: true,
           });
           
           // Add small accent indicator
           pptSlide.addShape(pptx.ShapeType.rect, {
             x: '12%',
-            y: 1.72 + (i * 0.6),
+            y: 1.72 + (i * 0.7),
             w: 0.2,
             h: 0.2,
             fill: { color: colorScheme.accent },
@@ -272,8 +297,8 @@ export const generatePPT = (presentation: Presentation): void => {
           path: slide.imageUrl,
           x: '60%', 
           y: 1.7,
-          w: 3.5, 
-          h: 3,
+          w: 4.5, 
+          h: 3.5,
         });
       } else if (layoutType === 1) {
         // Centered larger image for layout 1
@@ -281,8 +306,8 @@ export const generatePPT = (presentation: Presentation): void => {
           path: slide.imageUrl,
           x: '27.5%', 
           y: 5,
-          w: 5, 
-          h: 3,
+          w: 6, 
+          h: 3.5,
         });
       } else {
         // Right-aligned image with border for layout 2
@@ -290,16 +315,16 @@ export const generatePPT = (presentation: Presentation): void => {
           path: slide.imageUrl,
           x: '66%', 
           y: 1.7,
-          w: 3, 
-          h: 3.2,
+          w: 3.5, 
+          h: 3.5,
         });
         
         // Decorative frame around image
         pptSlide.addShape(pptx.ShapeType.rect, {
           x: '65.8%',
           y: 1.6,
-          w: 3.2,
-          h: 3.4,
+          w: 3.7,
+          h: 3.7,
           line: { color: colorScheme.accent, width: 2 },
           fill: { type: 'none' }
         });
@@ -314,7 +339,7 @@ export const generatePPT = (presentation: Presentation): void => {
       h: 0.3, 
       fontSize: 12, 
       color: colorScheme.text,
-      fontFace: 'Arial',
+      fontFace: 'Calibri',
       align: 'right',
     });
     
@@ -353,9 +378,9 @@ export const generatePPT = (presentation: Presentation): void => {
     fontSize: 60, 
     color: colorScheme.accent,
     bold: true,
-    fontFace: 'Arial',
+    fontFace: 'Calibri',
   });
   
-  // Save the presentation
+  // Save the presentation with proper 16:9 ratio preserved
   pptx.writeFile({ fileName: `${presentation.title.replace(/\s+/g, '_')}_Presentation.pptx` });
 };
