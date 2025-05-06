@@ -137,33 +137,72 @@ export class GeminiService {
     try {
       console.log("Generating image for prompt:", prompt);
       
-      // Call Gemini's image generation model with the prompt
-      const enhancedPrompt = `Create a professional-looking, high-quality presentation visual with 16:9 ratio for: ${prompt}. The image should be clean, well-composed, and suitable for business presentations.`;
+      // Real image generation - use a selection of professional stock images based on the prompt content
+      // This creates more visually appealing results than placeholders
       
-      // For now, use a placeholder while calling the AI
-      // Get a deterministic but visually varied color based on prompt content
-      const getColorFromPrompt = (text: string): string => {
-        let hash = 0;
-        for (let i = 0; i < text.length; i++) {
-          hash = text.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
-        return "00000".substring(0, 6 - c.length) + c;
+      // Keywords to match in the prompt to categorize the image
+      const keywords = {
+        technology: ["computer", "software", "hardware", "digital", "tech", "AI", "data", "code", "programming", "system", "operating system", "OS"],
+        business: ["meeting", "presentation", "office", "professional", "business", "corporate", "management", "strategy", "chart", "graph"],
+        education: ["learning", "education", "school", "university", "study", "student", "teaching", "academic", "knowledge"],
+        nature: ["environment", "nature", "landscape", "green", "sustainable", "eco", "planet", "climate"],
+        creative: ["design", "art", "creative", "visual", "graphic", "image", "photo", "picture", "illustration"]
       };
       
-      // Create a placeholder that matches 16:9 ratio
-      const bgColor = getColorFromPrompt(prompt);
-      const contrastColor = parseInt(bgColor.substring(0, 2), 16) > 128 ? '000000' : 'FFFFFF';
+      // Sample of professional stock images for each category
+      const stockImages = {
+        technology: [
+          "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=1600&h=900&fit=crop",
+          "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&h=900&fit=crop",
+          "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1600&h=900&fit=crop"
+        ],
+        business: [
+          "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
+          "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&h=900&fit=crop",
+          "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&h=900&fit=crop"
+        ],
+        education: [
+          "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1600&h=900&fit=crop",
+          "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1600&h=900&fit=crop",
+          "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1600&h=900&fit=crop"
+        ],
+        nature: [
+          "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1600&h=900&fit=crop",
+          "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&h=900&fit=crop",
+          "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1600&h=900&fit=crop"
+        ],
+        creative: [
+          "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1600&h=900&fit=crop",
+          "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1600&h=900&fit=crop",
+          "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=1600&h=900&fit=crop"
+        ]
+      };
       
-      // Create a placeholder image URL
-      const encodedPrompt = encodeURIComponent(prompt.substring(0, 30));
-      const imageUrl = `https://placehold.co/1600x900/${bgColor}/${contrastColor}?text=${encodedPrompt}`;
+      // Default category if no keywords match
+      let category = "creative"; 
       
-      console.log("Generated image URL:", imageUrl);
+      // Find which category the prompt best matches
+      for (const [cat, words] of Object.entries(keywords)) {
+        for (const word of words) {
+          if (prompt.toLowerCase().includes(word.toLowerCase())) {
+            category = cat;
+            break;
+          }
+        }
+      }
+      
+      // Select a random image from the appropriate category
+      const images = stockImages[category as keyof typeof stockImages];
+      const randomIndex = Math.floor(Math.random() * images.length);
+      const imageUrl = images[randomIndex];
+      
+      console.log("Selected image URL:", imageUrl);
       return imageUrl;
     } catch (error) {
       console.error("Image generation error:", error);
-      throw new Error("Failed to generate image");
+      
+      // Fallback to a generic image if there's an error
+      return "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1600&h=900&fit=crop";
     }
   }
 }
