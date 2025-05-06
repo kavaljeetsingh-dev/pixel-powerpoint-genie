@@ -1,16 +1,18 @@
-
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { DownloadIcon, ChevronLeftIcon, ChevronRightIcon, ZapIcon } from "lucide-react";
+import { DownloadIcon, ChevronLeftIcon, ChevronRightIcon, ZapIcon, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Presentation, SlideContent } from "@/lib/types";
 import { generatePPT } from "@/lib/ppt-generator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Progress } from "@/components/ui/progress";
 
 interface PresentationPreviewProps {
   presentation: Presentation | null;
   loading: boolean;
+  generatingImages?: boolean;
+  imageProgress?: number;
 }
 
 // Get theme colors based on theme name
@@ -38,7 +40,7 @@ const getThemeColors = (theme: string) => {
   }
 };
 
-export function PresentationPreview({ presentation, loading }: PresentationPreviewProps) {
+export function PresentationPreview({ presentation, loading, generatingImages = false, imageProgress = 0 }: PresentationPreviewProps) {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -69,8 +71,64 @@ export function PresentationPreview({ presentation, loading }: PresentationPrevi
         </motion.div>
         <h3 className="text-xl font-semibold mb-2">Generating Your Presentation</h3>
         <p className="text-center text-muted-foreground">
-          Our AI is crafting your slides with engaging content and images...
+          Our AI is crafting your slides with engaging content...
         </p>
+      </div>
+    );
+  }
+
+  if (generatingImages) {
+    return (
+      <div className="flex flex-col h-full">
+        <div className="flex justify-between items-center p-4 border-b">
+          <h2 className="text-lg font-semibold">{presentation?.title}</h2>
+          <Button variant="outline" disabled className="gap-2">
+            <DownloadIcon className="h-4 w-4" />
+            Download PPT
+          </Button>
+        </div>
+        
+        <div className="flex-grow flex flex-col items-center justify-center p-8">
+          <motion.div
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="mb-6"
+          >
+            <ImageIcon size={40} className="text-primary" />
+          </motion.div>
+          <h3 className="text-xl font-semibold mb-2">Generating Images</h3>
+          <p className="text-center text-muted-foreground mb-4">
+            Creating visuals for your presentation...
+          </p>
+          
+          {/* Image generation progress bar */}
+          <div className="w-full max-w-md mb-2">
+            <Progress value={imageProgress} className="h-2" />
+          </div>
+          <p className="text-sm text-muted-foreground">{imageProgress}% complete</p>
+          
+          {/* If presentation exists, show current slide */}
+          {presentation && (
+            <div className="mt-8 max-w-md w-full">
+              <Card>
+                <CardContent className="p-4">
+                  <p className="font-semibold">{presentation.slides[currentSlide]?.title}</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {presentation.slides[currentSlide]?.imagePrompt}
+                  </p>
+                </CardContent>
+              </Card>
+              
+              <div className="flex justify-between mt-4">
+                <Button variant="outline" size="sm" onClick={handlePrevSlide}>Previous</Button>
+                <span className="text-sm py-2">
+                  {currentSlide + 1} / {presentation.slides.length}
+                </span>
+                <Button variant="outline" size="sm" onClick={handleNextSlide}>Next</Button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

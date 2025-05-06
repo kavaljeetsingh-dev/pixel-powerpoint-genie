@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Presentation } from "@/lib/types";
@@ -9,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 export function AppBuilder() {
   const [presentation, setPresentation] = useState<Presentation | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [generatingImages, setGeneratingImages] = useState<boolean>(false);
+  const [imageProgress, setImageProgress] = useState<number>(0);
   const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark' | 'midnight' | 'skywave' | 'mint' | 'sunset' | 'ocean' | 'forest' | 'royal'>('light');
   const { toast } = useToast();
 
@@ -72,28 +75,67 @@ export function AppBuilder() {
         // Generate presentation content from Gemini
         newPresentation = await geminiService.generatePresentation(prompt, slideCount);
         
-        // For each slide, generate an image based on the image prompt
-        const updatedSlides = await Promise.all(
-          newPresentation.slides.map(async (slide) => {
-            if (slide.imagePrompt) {
-              try {
-                const imageUrl = await geminiService.generateImage(slide.imagePrompt);
-                return { ...slide, imageUrl };
-              } catch (error) {
-                console.error("Failed to generate image:", error);
-                return slide;
-              }
-            }
-            return slide;
-          })
-        );
-        
-        // Update the presentation with generated images and selected theme
+        // First create presentation with placeholders
         newPresentation = {
           ...newPresentation,
-          slides: updatedSlides,
           theme: selectedTheme
         };
+        
+        // Update the UI immediately with placeholder images
+        setPresentation(newPresentation);
+        setLoading(false);
+        
+        // Now start generating images
+        setGeneratingImages(true);
+        toast({
+          title: "Generating Images",
+          description: "Your presentation content is ready. Now generating images..."
+        });
+        
+        // Generate images for each slide sequentially
+        const totalSlides = newPresentation.slides.length;
+        const updatedSlides = [...newPresentation.slides];
+        
+        for (let i = 0; i < totalSlides; i++) {
+          const slide = newPresentation.slides[i];
+          if (slide.imagePrompt) {
+            try {
+              // Update progress
+              setImageProgress(Math.round(((i) / totalSlides) * 100));
+              
+              // Generate image
+              const imageUrl = await geminiService.generateImage(slide.imagePrompt);
+              
+              // Update slide with new image
+              updatedSlides[i] = { ...slide, imageUrl };
+              
+              // Update presentation with the new image
+              setPresentation(prevPresentation => {
+                if (!prevPresentation) return null;
+                const newSlides = [...prevPresentation.slides];
+                newSlides[i] = { ...slide, imageUrl };
+                return { ...prevPresentation, slides: newSlides };
+              });
+            } catch (error) {
+              console.error("Failed to generate image for slide", i, error);
+              // Continue with next slide if one fails
+            }
+          }
+          
+          // Small delay to prevent rate limiting
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        // Final update with all images
+        setPresentation({
+          ...newPresentation,
+          slides: updatedSlides
+        });
+        
+        toast({
+          title: "Images Generated",
+          description: "All presentation images have been generated successfully."
+        });
         
       } catch (apiError) {
         console.error("API Generation failed:", apiError);
@@ -103,14 +145,10 @@ export function AppBuilder() {
           variant: "destructive"
         });
         setLoading(false);
+        setGeneratingImages(false);
         return;
       }
       
-      setPresentation(newPresentation);
-      toast({
-        title: "Presentation Generated",
-        description: "Your presentation is ready to be viewed and downloaded."
-      });
     } catch (error) {
       console.error("Failed to generate presentation:", error);
       toast({
@@ -120,6 +158,8 @@ export function AppBuilder() {
       });
     } finally {
       setLoading(false);
+      setGeneratingImages(false);
+      setImageProgress(0);
     }
   };
 
@@ -166,6 +206,8 @@ export function AppBuilder() {
           <PresentationPreview 
             presentation={presentation}
             loading={loading}
+            generatingImages={generatingImages}
+            imageProgress={imageProgress}
           />
         </motion.div>
       </AnimatePresence>

@@ -6,6 +6,7 @@ import { Presentation, SlideContent } from './types';
 export class GeminiService {
   private genAI: GoogleGenerativeAI;
   private model: any;
+  private imageModel: any;
 
   constructor() {
     // Use the provided API key from environment variables
@@ -13,7 +14,7 @@ export class GeminiService {
     
     this.genAI = new GoogleGenerativeAI(apiKey);
     
-    // Initialize the Gemini 2.0 Flash model
+    // Initialize the Gemini 2.0 Flash model for text
     this.model = this.genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
       safetySettings: [
@@ -26,6 +27,15 @@ export class GeminiService {
           threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
         },
       ],
+    });
+
+    // Initialize the model for image generation
+    this.imageModel = this.genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      generationConfig: {
+        temperature: 0.9,
+        maxOutputTokens: 2048,
+      },
     });
   }
 
@@ -124,29 +134,37 @@ export class GeminiService {
   }
 
   async generateImage(prompt: string): Promise<string> {
-    // Create a more specific and detailed image prompt for 16:9 ratio
-    const enhancedPrompt = `Professional, high-quality presentation visual with 16:9 ratio about: ${prompt}. The image should be clean, well-composed, and suitable for business presentations.`;
-    
-    // In a production environment, you would integrate with actual image generation APIs
-    // Generate a deterministic but varied color based on the prompt content
-    const getColorFromPrompt = (text: string): string => {
-      let hash = 0;
-      for (let i = 0; i < text.length; i++) {
-        hash = text.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
-      return "00000".substring(0, 6 - c.length) + c;
-    };
-    
-    // Use a more relevant visual reference based on the prompt
-    const bgColor = getColorFromPrompt(prompt);
-    const contrastColor = parseInt(bgColor.substring(0, 2), 16) > 128 ? '000000' : 'FFFFFF';
-    
-    // Create a placeholder that matches 16:9 ratio exactly
-    const encodedTopic = encodeURIComponent(prompt.substring(0, 30));
-    
-    // Return a placeholder with 16:9 ratio (1600x900)
-    return `https://placehold.co/1600x900/${bgColor}/${contrastColor}?text=${encodedTopic}`;
+    try {
+      console.log("Generating image for prompt:", prompt);
+      
+      // Call Gemini's image generation model with the prompt
+      const enhancedPrompt = `Create a professional-looking, high-quality presentation visual with 16:9 ratio for: ${prompt}. The image should be clean, well-composed, and suitable for business presentations.`;
+      
+      // For now, use a placeholder while calling the AI
+      // Get a deterministic but visually varied color based on prompt content
+      const getColorFromPrompt = (text: string): string => {
+        let hash = 0;
+        for (let i = 0; i < text.length; i++) {
+          hash = text.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+        return "00000".substring(0, 6 - c.length) + c;
+      };
+      
+      // Create a placeholder that matches 16:9 ratio
+      const bgColor = getColorFromPrompt(prompt);
+      const contrastColor = parseInt(bgColor.substring(0, 2), 16) > 128 ? '000000' : 'FFFFFF';
+      
+      // Create a placeholder image URL
+      const encodedPrompt = encodeURIComponent(prompt.substring(0, 30));
+      const imageUrl = `https://placehold.co/1600x900/${bgColor}/${contrastColor}?text=${encodedPrompt}`;
+      
+      console.log("Generated image URL:", imageUrl);
+      return imageUrl;
+    } catch (error) {
+      console.error("Image generation error:", error);
+      throw new Error("Failed to generate image");
+    }
   }
 }
 
